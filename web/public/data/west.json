@@ -1,0 +1,376 @@
+{
+  "pool" : {
+    "id" : "west",
+    "name" : "West Campus Pool",
+    "address" : "2100 Browning St., Berkeley, CA 94707",
+    "phone" : "510-981-5125"
+  },
+  "season" : {
+    "label" : "Spring 2026",
+    "valid_from" : "2026-04-06",
+    "valid_through" : "2026-06-07"
+  },
+  "last_updated" : "2026-02-24T00:00:00Z",
+  "closures" : [ {
+    "date" : "2026-05-18",
+    "reason" : "City holiday"
+  }, {
+    "date" : "2026-05-25",
+    "reason" : "City holiday"
+  }, {
+    "date" : "2026-06-06",
+    "reason" : "Pre-Summer Staff Training"
+  }, {
+    "date" : "2026-06-07",
+    "reason" : "Pre-Summer Staff Training"
+  } ],
+  "schedule" : [ {
+    "day" : "Monday",
+    "activity" : "Lap Swim",
+    "start" : "09:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Lap Swim",
+    "start" : "11:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Lap Swim",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Lap Swim",
+    "start" : "08:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Lap Swim",
+    "start" : "11:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Lap Swim",
+    "start" : "17:30",
+    "end" : "19:00",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Lap Swim",
+    "start" : "09:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Lap Swim",
+    "start" : "11:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Lap Swim",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Thursday",
+    "activity" : "Lap Swim",
+    "start" : "08:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Lap Swim",
+    "start" : "11:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Lap Swim",
+    "start" : "17:30",
+    "end" : "19:00",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Friday",
+    "activity" : "Lap Swim",
+    "start" : "09:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Lap Swim",
+    "start" : "11:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Lap Swim",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Saturday",
+    "activity" : "Lap Swim",
+    "start" : "14:30",
+    "end" : "16:30",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Saturday",
+    "activity" : "Lap Swim",
+    "start" : "16:30",
+    "end" : "18:30",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Lap Swim",
+    "start" : "08:00",
+    "end" : "09:00",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Lap Swim",
+    "start" : "09:00",
+    "end" : "12:00",
+    "notes" : "Limited Lap Lanes"
+  }, {
+    "day" : "Sunday",
+    "activity" : "Aqua Zumba",
+    "start" : "09:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Senior Exercise",
+    "start" : "10:00",
+    "end" : "11:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Senior Exercise",
+    "start" : "10:00",
+    "end" : "11:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Senior Exercise",
+    "start" : "10:00",
+    "end" : "11:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Senior Exercise",
+    "start" : "10:00",
+    "end" : "11:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Senior Exercise",
+    "start" : "10:00",
+    "end" : "11:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Swim Lessons",
+    "start" : "16:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Swim Lessons",
+    "start" : "16:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Swim Lessons",
+    "start" : "16:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Swim Lessons",
+    "start" : "16:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Independent Exercise",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Independent Exercise",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Independent Exercise",
+    "start" : "08:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Independent Exercise",
+    "start" : "17:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Independent Exercise",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Independent Exercise",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Independent Exercise",
+    "start" : "08:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Independent Exercise",
+    "start" : "17:30",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Independent Exercise",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Independent Exercise",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Saturday",
+    "activity" : "Independent Exercise",
+    "start" : "16:30",
+    "end" : "18:30",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Independent Exercise",
+    "start" : "08:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Family Swim",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Family Swim",
+    "start" : "08:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Family Swim",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Family Swim",
+    "start" : "08:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Family Swim",
+    "start" : "09:00",
+    "end" : "13:00",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Family Swim",
+    "start" : "17:00",
+    "end" : "19:00",
+    "notes" : ""
+  }, {
+    "day" : "Saturday",
+    "activity" : "Family Swim",
+    "start" : "16:30",
+    "end" : "18:30",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Family Swim",
+    "start" : "08:00",
+    "end" : "10:00",
+    "notes" : ""
+  }, {
+    "day" : "Saturday",
+    "activity" : "Community Swim",
+    "start" : "14:30",
+    "end" : "16:30",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Community Swim",
+    "start" : "10:00",
+    "end" : "12:00",
+    "notes" : ""
+  }, {
+    "day" : "Monday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Tuesday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Wednesday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Thursday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Friday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Saturday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  }, {
+    "day" : "Sunday",
+    "activity" : "Shower Program",
+    "start" : "19:15",
+    "end" : "20:15",
+    "notes" : ""
+  } ]
+}
