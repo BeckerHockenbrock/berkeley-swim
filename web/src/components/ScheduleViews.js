@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { addDays, compareAsc, isBefore, isEqual } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { getAllSchedules } from "@/lib/loadSchedule";
@@ -13,12 +13,30 @@ import {
   nextActivity,
 } from "@/lib/now";
 import { useNow } from "@/lib/useNow";
+import {
+  FILTER_KEY,
+  FILTER_TIP_KEY,
+  POOL_KEY,
+  useStoredState,
+} from "@/lib/preferences";
+import {
+  ACTIVITY_FILTERS,
+  DEFAULT_ACTIVITY_FILTER,
+  entryMatchesFilter,
+  isActivityFilterId,
+} from "@/lib/filters";
 
 const POOL_FILTERS = [
   { id: "all", label: "All" },
   { id: "king", label: "King" },
   { id: "west", label: "West" },
 ];
+
+const POOL_IDS = ["all", "king", "west"];
+
+function isPoolFilterId(value) {
+  return POOL_IDS.includes(value);
+}
 
 const ACTIVITY_STYLES = [
   {
@@ -50,7 +68,11 @@ const DEFAULT_ACTIVITY_STYLE = {
 
 export function NowView() {
   const now = useNow();
-  const [activePool, setActivePool] = useState("all");
+  const [activePool, setActivePool] = useStoredState(
+    POOL_KEY,
+    "all",
+    isPoolFilterId,
+  );
   const loadedAt = useMemo(() => new Date(), []);
   const schedules = useMemo(() => getAllSchedules(), []);
   const visibleSchedules =
@@ -66,26 +88,7 @@ export function NowView() {
         meta={`Updated ${minutesAgo(loadedAt, now)}`}
       />
 
-      <div className="grid grid-cols-3 rounded-lg border border-slate-200 bg-slate-100 p-1 print:hidden sm:w-fit">
-        {POOL_FILTERS.map((filter) => {
-          const selected = activePool === filter.id;
-          return (
-            <button
-              key={filter.id}
-              type="button"
-              className={`min-h-9 rounded-md px-4 text-sm font-medium transition ${
-                selected
-                  ? "bg-surface text-foreground shadow-sm"
-                  : "text-muted hover:text-foreground"
-              }`}
-              aria-pressed={selected}
-              onClick={() => setActivePool(filter.id)}
-            >
-              {filter.label}
-            </button>
-          );
-        })}
-      </div>
+      <PoolToggle activePool={activePool} onChange={setActivePool} />
 
       <section className="grid gap-4 lg:grid-cols-2">
         {visibleSchedules.map((schedule) => (
@@ -98,19 +101,53 @@ export function NowView() {
 
 export function TodayView() {
   const now = useNow();
-  const schedules = useMemo(() => getAllSchedules(), []);
+  const allSchedules = useMemo(() => getAllSchedules(), []);
+  const [activePool, setActivePool] = useStoredState(
+    POOL_KEY,
+    "all",
+    isPoolFilterId,
+  );
+  const [activeFilter, setActiveFilter] = useStoredState(
+    FILTER_KEY,
+    DEFAULT_ACTIVITY_FILTER,
+    isActivityFilterId,
+  );
+
+  const schedules =
+    activePool === "all"
+      ? allSchedules
+      : allSchedules.filter((schedule) => schedule.pool.id === activePool);
+
+  const meta =
+    activePool === "all"
+      ? "Both pools"
+      : activePool === "king"
+        ? "King Pool"
+        : "West Campus Pool";
 
   return (
     <>
       <ViewHeader
         title="Today"
         subtitle={formatInTimeZone(now, BERKELEY_TIME_ZONE, "EEEE, MMMM d")}
-        meta="Both pools"
+        meta={meta}
+      />
+
+      <Toolbar
+        activePool={activePool}
+        onPoolChange={setActivePool}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
       />
 
       <section className="grid gap-4 lg:grid-cols-2">
         {schedules.map((schedule) => (
-          <TodayPool key={schedule.pool.id} schedule={schedule} now={now} />
+          <TodayPool
+            key={schedule.pool.id}
+            schedule={schedule}
+            now={now}
+            filterId={activeFilter}
+          />
         ))}
       </section>
     </>
@@ -119,11 +156,28 @@ export function TodayView() {
 
 export function WeekView() {
   const now = useNow();
-  const schedules = useMemo(() => getAllSchedules(), []);
+  const allSchedules = useMemo(() => getAllSchedules(), []);
+  const [activePool, setActivePool] = useStoredState(
+    POOL_KEY,
+    "all",
+    isPoolFilterId,
+  );
+  const [activeFilter, setActiveFilter] = useStoredState(
+    FILTER_KEY,
+    DEFAULT_ACTIVITY_FILTER,
+    isActivityFilterId,
+  );
   const weekDates = useMemo(
     () => Array.from({ length: 7 }, (_, index) => addDays(now, index)),
     [now],
   );
+
+  const schedules =
+    activePool === "all"
+      ? allSchedules
+      : allSchedules.filter((schedule) => schedule.pool.id === activePool);
+
+  const minWidthClass = schedules.length > 1 ? "min-w-[980px]" : "min-w-[560px]";
 
   return (
     <>
@@ -141,19 +195,136 @@ export function WeekView() {
         meta="Next 7 days"
       />
 
+      <Toolbar
+        activePool={activePool}
+        onPoolChange={setActivePool}
+        activeFilter={activeFilter}
+        onFilterChange={setActiveFilter}
+      />
+
       <section className="overflow-x-auto pb-2 print:overflow-visible">
-        <div className="grid min-w-[980px] grid-cols-7 gap-3 print-grid print:min-w-0 print:gap-2">
+        <div
+          className={`grid ${minWidthClass} grid-cols-7 gap-3 print-grid print:min-w-0 print:gap-2`}
+        >
           {weekDates.map((date) => (
             <WeekDay
               key={formatInTimeZone(date, BERKELEY_TIME_ZONE, "yyyy-MM-dd")}
               date={date}
               schedules={schedules}
               now={now}
+              filterId={activeFilter}
             />
           ))}
         </div>
       </section>
     </>
+  );
+}
+
+function Toolbar({
+  activePool,
+  onPoolChange,
+  activeFilter,
+  onFilterChange,
+}) {
+  const [tipDismissed, setTipDismissed, tipHydrated] = useStoredState(
+    FILTER_TIP_KEY,
+    false,
+  );
+  const showTip = tipHydrated && !tipDismissed && activeFilter === "all";
+  const dismissTip = useCallback(() => setTipDismissed(true), [setTipDismissed]);
+
+  return (
+    <div className="flex flex-col gap-3 print:hidden">
+      <div className="flex flex-wrap items-center gap-3">
+        <PoolToggle activePool={activePool} onChange={onPoolChange} />
+      </div>
+      {showTip ? <FilterTip onDismiss={dismissTip} /> : null}
+      <FilterChips
+        activeFilter={activeFilter}
+        onChange={(id) => {
+          onFilterChange(id);
+          if (id !== "all") dismissTip();
+        }}
+      />
+    </div>
+  );
+}
+
+function PoolToggle({ activePool, onChange }) {
+  return (
+    <div
+      className="grid grid-cols-3 rounded-lg border border-slate-200 bg-slate-100 p-1 print:hidden sm:w-fit"
+      role="group"
+      aria-label="Pool"
+    >
+      {POOL_FILTERS.map((filter) => {
+        const selected = activePool === filter.id;
+        return (
+          <button
+            key={filter.id}
+            type="button"
+            className={`min-h-9 rounded-md px-4 text-sm font-medium transition ${
+              selected
+                ? "bg-surface text-foreground shadow-sm"
+                : "text-muted hover:text-foreground"
+            }`}
+            aria-pressed={selected}
+            onClick={() => onChange(filter.id)}
+          >
+            {filter.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function FilterChips({ activeFilter, onChange }) {
+  return (
+    <div
+      className="-mx-1 flex flex-wrap items-center gap-2 px-1"
+      role="group"
+      aria-label="Activity filter"
+    >
+      {ACTIVITY_FILTERS.map((filter) => {
+        const selected = activeFilter === filter.id;
+        return (
+          <button
+            key={filter.id}
+            type="button"
+            className={`min-h-9 rounded-full border px-3 text-sm font-medium transition ${
+              selected
+                ? "border-pool bg-pool text-white shadow-sm"
+                : "border-slate-200 bg-surface text-muted hover:border-slate-300 hover:text-foreground"
+            }`}
+            aria-pressed={selected}
+            onClick={() => onChange(filter.id)}
+          >
+            {filter.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function FilterTip({ onDismiss }) {
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-900">
+      <p>
+        <span aria-hidden="true">{"\u{1F4A1} "}</span>
+        Tap a chip below to filter by activity.
+      </p>
+      <button
+        type="button"
+        onClick={onDismiss}
+        className="rounded-md px-2 py-1 text-xs font-semibold uppercase tracking-normal text-sky-800 hover:bg-sky-100"
+        aria-label="Dismiss tip"
+      >
+        Got it
+      </button>
+    </div>
   );
 }
 
@@ -227,10 +398,14 @@ function NowHero({ schedule, now }) {
   );
 }
 
-function TodayPool({ schedule, now }) {
+function TodayPool({ schedule, now, filterId = "all" }) {
   const closure = closureForDate(schedule, now);
   const inSeason = isWithinSeason(schedule, now);
-  const entries = entriesForDate(schedule, now);
+  const allEntries = entriesForDate(schedule, now);
+  const entries = allEntries.filter((entry) =>
+    entryMatchesFilter(entry, filterId),
+  );
+  const filtered = filterId !== "all";
 
   return (
     <article className="rounded-lg border border-slate-200 bg-surface shadow-sm print:break-inside-avoid print:shadow-none">
@@ -258,8 +433,14 @@ function TodayPool({ schedule, now }) {
           <ClosedNotice reason={closure.reason} />
         ) : !inSeason ? (
           <ClosedNotice reason="outside the current season" />
-        ) : entries.length === 0 ? (
+        ) : allEntries.length === 0 ? (
           <ClosedNotice reason="No activities listed today" />
+        ) : entries.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-muted">
+            {filtered
+              ? "No matching sessions today for this filter."
+              : "No sessions today."}
+          </p>
         ) : (
           entries.map((entry) => (
             <ActivityRow key={entryKey(entry)} entry={entry} now={now} />
@@ -270,7 +451,7 @@ function TodayPool({ schedule, now }) {
   );
 }
 
-function WeekDay({ date, schedules, now }) {
+function WeekDay({ date, schedules, now, filterId = "all" }) {
   return (
     <article className="rounded-lg border border-slate-200 bg-surface print:break-inside-avoid">
       <div className="border-b border-slate-200 p-3">
@@ -292,6 +473,7 @@ function WeekDay({ date, schedules, now }) {
             schedule={schedule}
             date={date}
             now={now}
+            filterId={filterId}
           />
         ))}
       </div>
@@ -299,10 +481,14 @@ function WeekDay({ date, schedules, now }) {
   );
 }
 
-function WeekPoolDay({ schedule, date, now }) {
+function WeekPoolDay({ schedule, date, now, filterId = "all" }) {
   const closure = closureForDate(schedule, date);
   const inSeason = isWithinSeason(schedule, date);
-  const entries = entriesForDate(schedule, date);
+  const allEntries = entriesForDate(schedule, date);
+  const entries = allEntries.filter((entry) =>
+    entryMatchesFilter(entry, filterId),
+  );
+  const filtered = filterId !== "all";
 
   return (
     <section className="space-y-2">
@@ -313,8 +499,10 @@ function WeekPoolDay({ schedule, date, now }) {
         <MiniClosed reason={closure.reason} />
       ) : !inSeason ? (
         <MiniClosed reason="Out of season" />
-      ) : entries.length === 0 ? (
+      ) : allEntries.length === 0 ? (
         <MiniClosed reason="No sessions" />
+      ) : entries.length === 0 ? (
+        <MiniClosed reason={filtered ? "No matches" : "No sessions"} />
       ) : (
         entries.map((entry) => (
           <ActivityBlock key={entryKey(entry)} entry={entry} now={now} />
