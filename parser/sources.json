@@ -1,0 +1,15 @@
+{
+  "_comment": "PDF URLs change every season (filename includes season + date range, hosting folder includes upload month). Verify each URL in a browser before relying on the daily workflow - the King URL below is the known-good pattern from Info.md, the West URL is a best guess and likely needs the upload-month segment adjusted.",
+  "pools": [
+    {
+      "id": "king",
+      "url": "https://berkeleyca.gov/sites/default/files/2026-02/King%20Pool%20Schedule%20Spring%202026%203.2-6.7.pdf",
+      "out": "web/public/data/king.json"
+    },
+    {
+      "id": "west",
+      "url": "https://berkeleyca.gov/sites/default/files/2026-02/West%20Campus%20Pool%20Schedule%20Spring%202026%204.6%20-6.7.pdf",
+      "out": "web/public/data/west.json"
+    }
+  ]
+}
