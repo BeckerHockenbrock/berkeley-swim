@@ -3,15 +3,9 @@ import { civicRecLinks } from "@/lib/civicrec";
 const CARDS = [
   {
     title: "Swim once",
-    body: "A single drop-in. Resident and non-resident variants on the same page.",
+    body: "A single drop-in for Lap Swim, Family Swim, or general recreation.",
     cta: "Daily Aquatic Drop-In Pass",
     href: civicRecLinks.dailyAquaticPass,
-  },
-  {
-    title: "Swim regularly (Lap, Family, Recreation)",
-    body: "Lap Swim and Family Swim use the same Aquatic Drop-In Pass - there is no separate SKU. Pick a Daily, 10-swim, or Monthly pass.",
-    cta: "Aquatic Drop-In Passes",
-    href: civicRecLinks.aquaticPasses,
   },
   {
     title: "Punch card (10 swims)",
@@ -36,24 +30,6 @@ const CARDS = [
     body: "Drop-in class with its own per-session fee on CivicRec.",
     cta: "Aqua Zumba sessions",
     href: civicRecLinks.aquaZumba,
-  },
-  {
-    title: "Kids' swim lessons",
-    body: "Learn-To-Swim Levels 1 to 4 at King Pool and West Campus Pool.",
-    cta: "Learn-To-Swim classes",
-    href: civicRecLinks.learnToSwim,
-  },
-  {
-    title: "Parent and child lessons",
-    body: "Group lessons for caregivers with infants and toddlers.",
-    cta: "Parent and Child Aquatics",
-    href: civicRecLinks.parentChildAquatics,
-  },
-  {
-    title: "Teams or other programs",
-    body: "Anything else (adult lessons, masters, team programs) lives in the main catalog under Swim Lessons or the relevant category.",
-    cta: "Open CivicRec catalog",
-    href: civicRecLinks.mainCatalog,
   },
 ];
 
@@ -155,11 +131,6 @@ export function PassHelper() {
             The Aquatics category link on CivicRec currently loads Special
             Events instead of pool passes, so the obvious navigation path is
             broken.
-          </li>
-          <li>
-            Swim lesson registration is seasonal and lives under the Swim
-            Lessons category in the main catalog rather than a stable search
-            link.
           </li>
         </ul>
       </section>

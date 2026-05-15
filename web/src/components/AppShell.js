@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/today", label: "Today" },
   { href: "/week", label: "Week" },
   { href: "/passes", label: "Passes" },
+  { href: "/lessons", label: "Lessons" },
 ];
 
 export function AppShell({ children }) {
@@ -34,7 +35,7 @@ export function AppShell({ children }) {
           </Link>
 
           <nav
-            className="grid grid-cols-4 rounded-lg border border-slate-200 bg-slate-100 p-1"
+            className="grid grid-cols-5 rounded-lg border border-slate-200 bg-slate-100 p-1"
             aria-label="Schedule views"
           >
             {NAV_ITEMS.map((item) => {
@@ -44,7 +45,7 @@ export function AppShell({ children }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`grid min-h-9 min-w-20 place-items-center rounded-md px-4 text-sm font-medium transition ${
+                  className={`grid min-h-9 place-items-center rounded-md px-3 text-sm font-medium transition ${
                     selected
                       ? "bg-surface text-foreground shadow-sm"
                       : "text-muted hover:text-foreground"
