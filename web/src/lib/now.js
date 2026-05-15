@@ -46,6 +46,16 @@ export function closureForDate(pool, date = new Date()) {
   return schedule.closures.find((closure) => closure.date === dateKey) ?? null;
 }
 
+export function upcomingClosures(pool, now = new Date(), days = 14) {
+  const schedule = resolveSchedule(pool);
+  const startKey = dateKeyInBerkeley(now);
+  const endKey = dateKeyInBerkeley(addDays(now, days));
+  return schedule.closures
+    .filter((closure) => closure.date >= startKey && closure.date <= endKey)
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
 export function isWithinSeason(pool, date = new Date()) {
   const schedule = resolveSchedule(pool);
   const dateKey = dateKeyInBerkeley(date);

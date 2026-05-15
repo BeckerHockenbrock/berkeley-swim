@@ -11,6 +11,7 @@ import {
   entriesForDate,
   isWithinSeason,
   nextActivity,
+  upcomingClosures,
 } from "@/lib/now";
 import { useNow } from "@/lib/useNow";
 import {
@@ -90,6 +91,8 @@ export function NowView() {
 
       <PoolToggle activePool={activePool} onChange={setActivePool} />
 
+      <ClosureBanner schedules={visibleSchedules} now={now} />
+
       <section className="grid gap-4 lg:grid-cols-2">
         {visibleSchedules.map((schedule) => (
           <NowHero key={schedule.pool.id} schedule={schedule} now={now} />
@@ -139,6 +142,8 @@ export function TodayView() {
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
       />
+
+      <ClosureBanner schedules={schedules} now={now} />
 
       <section className="grid gap-4 lg:grid-cols-2">
         {schedules.map((schedule) => (
@@ -202,6 +207,8 @@ export function WeekView() {
         onFilterChange={setActiveFilter}
       />
 
+      <ClosureBanner schedules={schedules} now={now} />
+
       <section className="overflow-x-auto pb-2 print:overflow-visible">
         <div
           className={`grid ${minWidthClass} grid-cols-7 gap-3 print-grid print:min-w-0 print:gap-2`}
@@ -249,6 +256,42 @@ function Toolbar({
       />
     </div>
   );
+}
+
+function ClosureBanner({ schedules, now }) {
+  const items = schedules.flatMap((schedule) =>
+    upcomingClosures(schedule, now, 14).map((closure) => ({
+      key: `${schedule.pool.id}-${closure.date}`,
+      pool: schedule.pool,
+      closure,
+    })),
+  );
+
+  if (items.length === 0) return null;
+
+  items.sort((a, b) => a.closure.date.localeCompare(b.closure.date));
+
+  return (
+    <aside
+      className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900 print:hidden"
+      role="region"
+      aria-label="Upcoming pool closures"
+    >
+      <p className="font-semibold">Upcoming closures (next 14 days)</p>
+      <ul className="mt-2 space-y-1">
+        {items.map(({ key, pool, closure }) => (
+          <li key={key}>
+            {pool.name} closed {formatClosureDate(closure.date)} ({closure.reason})
+          </li>
+        ))}
+      </ul>
+    </aside>
+  );
+}
+
+function formatClosureDate(dateKey) {
+  const noonUtc = new Date(`${dateKey}T12:00:00Z`);
+  return formatInTimeZone(noonUtc, BERKELEY_TIME_ZONE, "EEEE MMMM d");
 }
 
 function PoolToggle({ activePool, onChange }) {
@@ -379,6 +422,8 @@ function NowHero({ schedule, now }) {
               <ActivityRow key={entryKey(entry)} entry={entry} now={now} />
             ))}
           </div>
+        ) : status.offSeason ? (
+          <OffSeasonNotice />
         ) : (
           <p className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
             {status.reason}
@@ -432,7 +477,7 @@ function TodayPool({ schedule, now, filterId = "all" }) {
         {closure ? (
           <ClosedNotice reason={closure.reason} />
         ) : !inSeason ? (
-          <ClosedNotice reason="outside the current season" />
+          <OffSeasonNotice />
         ) : allEntries.length === 0 ? (
           <ClosedNotice reason="No activities listed today" />
         ) : entries.length === 0 ? (
@@ -516,6 +561,8 @@ function ActivityRow({ entry, now }) {
   const active = isEntryActive(entry, now);
   const past = isEntryPast(entry, now);
   const style = activityStyle(entry.activity);
+  const limitedLanes = hasLimitedLapLanes(entry);
+  const extraNote = limitedLanes ? "" : entry.notes;
 
   return (
     <div
@@ -533,9 +580,12 @@ function ActivityRow({ entry, now }) {
       />
       <div className="flex items-start justify-between gap-3 pl-1">
         <div className={past ? "line-through decoration-slate-400" : ""}>
-          <p className="font-medium">{entry.activity}</p>
-          {entry.notes ? (
-            <p className="mt-0.5 text-sm text-muted">{entry.notes}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-medium">{entry.activity}</p>
+            {limitedLanes ? <LimitedLanesBadge /> : null}
+          </div>
+          {extraNote ? (
+            <p className="mt-0.5 text-sm text-muted">{extraNote}</p>
           ) : null}
         </div>
         <p
@@ -559,6 +609,8 @@ function ActivityBlock({ entry, now }) {
   const active = isEntryActive(entry, now);
   const past = isEntryPast(entry, now);
   const style = activityStyle(entry.activity);
+  const limitedLanes = hasLimitedLapLanes(entry);
+  const extraNote = limitedLanes ? "" : entry.notes;
 
   return (
     <div
@@ -576,9 +628,31 @@ function ActivityBlock({ entry, now }) {
       <p className={past ? "mt-1 line-through" : "mt-1"}>
         {formatClock(entry.startsAt)}-{formatClock(entry.endsAt)}
       </p>
-      {entry.notes ? <p className="mt-1 text-muted">{entry.notes}</p> : null}
+      {limitedLanes ? (
+        <p className="mt-1">
+          <LimitedLanesBadge compact />
+        </p>
+      ) : null}
+      {extraNote ? <p className="mt-1 text-muted">{extraNote}</p> : null}
     </div>
   );
+}
+
+function LimitedLanesBadge({ compact = false }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border border-amber-300 bg-amber-100 font-semibold uppercase tracking-normal text-amber-900 ${
+        compact ? "px-1.5 py-0.5 text-[10px]" : "px-2 py-0.5 text-xs"
+      }`}
+      title="Some lap lanes shared with another activity"
+    >
+      Limited lap lanes
+    </span>
+  );
+}
+
+function hasLimitedLapLanes(entry) {
+  return /limited lap lane/i.test(entry.notes ?? "");
 }
 
 function StatusBadge({ open, label }) {
@@ -598,6 +672,22 @@ function ClosedNotice({ reason }) {
     <p className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
       Closed: {reason}
     </p>
+  );
+}
+
+function OffSeasonNotice() {
+  return (
+    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+      <p>Schedule between seasons - check back soon.</p>
+      <a
+        href="https://berkeleyca.gov"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-block font-medium text-pool underline underline-offset-2 hover:text-sky-700"
+      >
+        Check the City of Berkeley page
+      </a>
+    </div>
   );
 }
 
@@ -640,7 +730,8 @@ function getStatus({ current, closure, inSeason }) {
     return {
       open: false,
       label: "Closed",
-      reason: "outside the current season",
+      reason: "Schedule between seasons - check back soon",
+      offSeason: true,
     };
   }
 
