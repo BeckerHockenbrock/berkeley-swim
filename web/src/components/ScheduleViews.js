@@ -26,6 +26,7 @@ import {
   entryMatchesFilter,
   isActivityFilterId,
 } from "@/lib/filters";
+import { PoolActions } from "./PoolActions";
 
 const POOL_FILTERS = [
   { id: "all", label: "All" },
@@ -438,6 +439,8 @@ function NowHero({ schedule, now }) {
               : "No upcoming sessions in this schedule"}
           </p>
         </div>
+
+        <PoolActions pool={schedule.pool} />
       </div>
     </article>
   );
@@ -474,6 +477,7 @@ function TodayPool({ schedule, now, filterId = "all" }) {
       </div>
 
       <div className="space-y-3 p-4">
+        <PoolActions pool={schedule.pool} />
         {closure ? (
           <ClosedNotice reason={closure.reason} />
         ) : !inSeason ? (

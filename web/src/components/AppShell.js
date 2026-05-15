@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AQUATICS_EMAIL } from "@/lib/civicrec";
 
 const NAV_ITEMS = [
   { href: "/", label: "Now" },
   { href: "/today", label: "Today" },
   { href: "/week", label: "Week" },
+  { href: "/passes", label: "Passes" },
 ];
 
 export function AppShell({ children }) {
@@ -32,7 +34,7 @@ export function AppShell({ children }) {
           </Link>
 
           <nav
-            className="grid grid-cols-3 rounded-lg border border-slate-200 bg-slate-100 p-1"
+            className="grid grid-cols-4 rounded-lg border border-slate-200 bg-slate-100 p-1"
             aria-label="Schedule views"
           >
             {NAV_ITEMS.map((item) => {
@@ -62,9 +64,20 @@ export function AppShell({ children }) {
       </main>
 
       <footer className="border-t border-slate-200 bg-surface print:hidden">
-        <div className="mx-auto max-w-6xl px-4 py-5 text-sm text-muted sm:px-6">
-          Unofficial. Not affiliated with the City of Berkeley. Data scraped
-          from berkeleyca.gov.
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-sm text-muted sm:px-6">
+          <p>
+            Unofficial. Not affiliated with the City of Berkeley. Data scraped
+            from berkeleyca.gov.
+          </p>
+          <p>
+            Questions for the City?{" "}
+            <a
+              href={`mailto:${AQUATICS_EMAIL}`}
+              className="font-medium text-pool underline underline-offset-2 hover:text-sky-700"
+            >
+              Email Aquatics
+            </a>
+          </p>
         </div>
       </footer>
     </div>
