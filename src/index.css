@@ -14,5 +14,7 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+  .focus-ring {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1f4b7a] focus-visible:ring-offset-2;
+  }
 }
-
