@@ -1,90 +1,122 @@
 import { useState } from 'react';
-import { ExternalLink, Info, AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Waves, CalendarDays, Ticket, MapPin, Phone } from 'lucide-react';
 import { ScheduleTab } from './components/ScheduleTab';
 import { LessonsTab } from './components/LessonsTab';
 import { PassesTab } from './components/PassesTab';
 import { getBerkeleyNow, getScheduleStatus, formatDate } from './lib/schedule';
 import { meta } from './data/loadSchedule';
 
+const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
+const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
+
+const FULL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+const TABS = [
+  { key: 'schedule', label: 'Schedule', icon: CalendarDays },
+  { key: 'lessons', label: 'Lessons', icon: Waves },
+  { key: 'pass', label: 'Passes', icon: Ticket },
+] as const;
+
+type TabKey = (typeof TABS)[number]['key'];
+
 export default function App() {
-  const [tab, setTab] = useState<'schedule' | 'lessons' | 'pass'>('schedule');
+  const [tab, setTab] = useState<TabKey>('schedule');
 
   const now = getBerkeleyNow();
   const status = getScheduleStatus(meta, now.dateISO);
+  const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
 
   return (
-    <div className="min-h-screen bg-[#eceae6] font-sans text-[#2a2a28] flex flex-col items-center sm:pb-20">
-      <div className="w-full bg-[#1b1b1a] text-[#cfcdc7] font-mono text-[10px] sm:text-xs tracking-widest text-center py-2 sm:py-[7px] px-4 uppercase">
-        Unofficial · Not affiliated with the City of Berkeley
+    <div className="min-h-screen bg-[#eef1f5] text-[#1a1a1a] font-sans flex flex-col">
+      {/* Slim, always-present unofficial disclaimer */}
+      <div className="w-full bg-[#16335c] text-[#cdd8e8]">
+        <div className="max-w-[680px] mx-auto px-4 py-1.5 flex items-center justify-center gap-1.5 text-center">
+          <AlertTriangle size={11} className="shrink-0 text-[#e7c14a]" />
+          <span className="text-[11px] leading-snug">
+            <strong className="font-semibold text-white">Unofficial.</strong> Not affiliated with the City of Berkeley.
+          </span>
+        </div>
       </div>
 
-      <div className="w-full max-w-[1080px] bg-[#fbfbf9] sm:border border-[#d6d3cc] sm:mt-7 sm:rounded shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden">
-        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between py-5 sm:py-[22px] px-5 sm:px-8 border-b border-[#e4e1da] gap-5 sm:gap-0">
-          <div className="flex items-center gap-[14px]">
-            <div className="flex flex-col gap-0.5">
-              <div className="text-[15px] sm:text-base font-bold">Berkeley Pools — unofficial schedule viewer</div>
-              <div className="font-mono text-[10px] text-[#a09c93]">King Pool · West Campus Pool</div>
+      {/* App header */}
+      <header className="sticky top-0 z-20 w-full bg-white/95 backdrop-blur border-b border-[#dde3e9]">
+        <div className="max-w-[680px] mx-auto px-4 py-3 flex items-center gap-3">
+          <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white flex items-center justify-center shadow-sm">
+            <Waves size={22} strokeWidth={2.25} />
+          </div>
+          <div className="flex flex-col leading-none">
+            <div className="flex items-center gap-2">
+              <span className="font-display text-[24px] font-semibold uppercase tracking-wide leading-none">Berkeley Pools</span>
+              <span className="inline-flex items-center text-[9px] font-semibold uppercase tracking-wider text-[#a42d36] bg-[#f7e7e7] border border-[#e6c4c4] rounded px-1.5 py-0.5">Unofficial</span>
             </div>
+            <span className="text-[13px] text-[#51606e] mt-1.5">{todayLabel}</span>
           </div>
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
-            <a href="https://rec.berkeleyca.gov/CA/berkeley-ca/catalog" target="_blank" rel="noopener noreferrer" className="focus-ring h-9 sm:h-[30px] flex-1 sm:flex-none px-3 border border-[#cdc9c1] rounded-[3px] inline-flex items-center justify-center gap-1.5 font-mono text-[10px] sm:text-xs sm:text-[10px] text-[#a09c93] cursor-pointer no-underline hover:bg-[#f4f2ec] transition-colors">
-              log in
-              <ExternalLink size={12} className="sm:w-[11px] sm:h-[11px]" />
-            </a>
-            <a href="https://rec.berkeleyca.gov/CA/berkeley-ca/catalog" target="_blank" rel="noopener noreferrer" className="focus-ring h-9 sm:h-[30px] flex-1 sm:flex-none px-3 bg-[#3a3a37] rounded-[3px] inline-flex items-center justify-center gap-1.5 font-mono text-[10px] sm:text-xs sm:text-[10px] text-[#e9e7e1] cursor-pointer no-underline hover:bg-[#4a4a47] transition-colors">
-              account
-              <ExternalLink size={12} className="sm:w-[11px] sm:h-[11px]" />
-            </a>
-          </div>
-        </header>
+        </div>
+      </header>
 
+      {/* Main content */}
+      <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-28">
+        {/* Staleness / closure notices */}
         {status.kind !== 'ok' && (
-          <div className={`px-5 sm:px-8 py-3 sm:py-2.5 border-b flex gap-3 items-start sm:items-center ${
-            status.kind === 'closed' ? 'bg-[#fceceb] text-[#8a2f27] border-[#f5d0cd]' : 'bg-[#fff5e6] text-[#8a5d19] border-[#ffe0b2]'
-          }`}>
-             <AlertTriangle size={18} className="shrink-0 mt-0.5 sm:mt-0 sm:w-4 sm:h-4" />
-             <p className="text-xs sm:text-[13px] font-medium">
-               {status.kind === 'closed' && `Both pools are closed today, ${formatDate(status.date)}.`}
-               {status.kind === 'expired' && `This schedule expired on ${formatDate(status.validThrough)}. The times below may be outdated.`}
-               {status.kind === 'upcoming' && `This schedule does not take effect until ${formatDate(status.validFrom)}.`}
-             </p>
+          <div
+            className={`rounded-xl px-4 py-3 mb-4 flex gap-2.5 items-start ${
+              status.kind === 'closed'
+                ? 'bg-[#fbeceb] text-[#7c2229] border border-[#f0cfce]'
+                : 'bg-[#fff6e0] text-[#6b5410] border border-[#ecd9a0]'
+            }`}
+          >
+            <AlertTriangle size={17} className="shrink-0 mt-0.5" />
+            <p className="text-[13px] font-medium leading-snug">
+              {status.kind === 'closed' && `Both pools are closed today, ${formatDate(status.date)}.`}
+              {status.kind === 'expired' && `This schedule expired on ${formatDate(status.validThrough)}. Times may be out of date — confirm on the official City catalog.`}
+              {status.kind === 'upcoming' && `This schedule does not take effect until ${formatDate(status.validFrom)}.`}
+            </p>
           </div>
         )}
-
-        <div className="bg-[#e9f2ff] px-5 sm:px-8 py-3.5 sm:py-3 border-b border-[#c6dcf0] flex gap-3 text-[#1f4b7a] items-start sm:items-center">
-           <Info size={18} className="shrink-0 mt-0.5 sm:mt-0 sm:w-4 sm:h-4" />
-           <p className="text-xs sm:text-[13px] sm:text-xs leading-relaxed">
-             <strong>Heads up:</strong> The action buttons below do not buy passes or log you in automatically. They simply direct you to the correct place on the official City of Berkeley CivicRec portal where you must log in and complete your transaction.
-           </p>
-        </div>
-
-        <nav className="flex gap-0 px-3 sm:px-8 border-b border-[#e4e1da] overflow-x-auto whitespace-nowrap hide-scrollbar">
-          <TabButton active={tab === 'schedule'} onClick={() => setTab('schedule')}>Schedule</TabButton>
-          <TabButton active={tab === 'lessons'} onClick={() => setTab('lessons')}>Swim Lessons</TabButton>
-          <TabButton active={tab === 'pass'} onClick={() => setTab('pass')}>Buy a Pass</TabButton>
-        </nav>
 
         {tab === 'schedule' && <ScheduleTab />}
         {tab === 'lessons' && <LessonsTab />}
         {tab === 'pass' && <PassesTab />}
-      </div>
-      
-      <footer className="mt-8 mb-4 text-center text-[11px] font-mono text-[#a8a49b]">
-        Unofficial. Not affiliated with the City of Berkeley.
-      </footer>
-    </div>
-  );
-}
 
-function TabButton({ children, active, onClick }: { children: React.ReactNode, active: boolean, onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`focus-ring appearance-none bg-transparent border-none cursor-pointer font-sans text-[15px] sm:text-sm font-semibold py-4 px-4 sm:px-[22px] border-b-2 -mb-[1px] whitespace-nowrap transition-colors ${
-        active ? 'text-[#2a2a28] border-[#2a2a28]' : 'text-[#a09c93] border-transparent hover:text-[#5b574f]'
-      }`}
-    >
-      {children}
-    </button>
+        {/* Footer */}
+        <footer className="mt-10 pt-6 border-t border-[#dadfe6] flex flex-col gap-3 text-[13px] text-[#51606e]">
+          <div className="flex flex-col gap-1.5">
+            <div className="flex items-start gap-2"><MapPin size={14} className="mt-0.5 shrink-0 text-[#9aa6b2]" /><span>King Pool · 1700 Hopkins St</span></div>
+            <div className="flex items-start gap-2"><MapPin size={14} className="mt-0.5 shrink-0 text-[#9aa6b2]" /><span>West Campus Pool · 2100 Browning St</span></div>
+            <div className="flex items-start gap-2"><Phone size={14} className="mt-0.5 shrink-0 text-[#9aa6b2]" /><span>(510) 981-5150</span></div>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href={OFFICIAL_CATALOG} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City registration catalog ↗</a>
+            <a href={OFFICIAL_AQUATICS} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City of Berkeley Aquatics ↗</a>
+          </div>
+          <p className="text-[12px] text-[#7a8794] leading-relaxed">
+            <strong className="font-semibold text-[#51606e]">Unofficial site.</strong> Not affiliated with, endorsed by, or operated by the City of Berkeley. Always verify times and fees on the official catalog. © {new Date().getFullYear()}
+          </p>
+        </footer>
+      </main>
+
+      {/* Bottom tab bar */}
+      <nav className="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#dde3e9] pb-[env(safe-area-inset-bottom)]">
+        <div className="max-w-[680px] mx-auto px-2 grid grid-cols-3">
+          {TABS.map((t) => {
+            const Icon = t.icon;
+            const active = tab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                aria-current={active ? 'page' : undefined}
+                className={`focus-ring appearance-none bg-transparent border-none cursor-pointer flex flex-col items-center gap-1 py-2.5 transition-colors ${
+                  active ? 'text-[#2a5caa]' : 'text-[#8a97a6] hover:text-[#51606e]'
+                }`}
+              >
+                <Icon size={22} strokeWidth={active ? 2.5 : 2} />
+                <span className={`text-[11px] tracking-wide ${active ? 'font-semibold' : 'font-medium'}`}>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
   );
 }

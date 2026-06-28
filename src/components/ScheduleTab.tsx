@@ -1,154 +1,287 @@
-import { useState } from 'react';
-import { meta, pools, programs } from '../data/loadSchedule';
+import { useMemo, useState } from 'react';
+import { ChevronDown, ExternalLink, Tag, MapPin } from 'lucide-react';
+import { pools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
-  formatDate,
-  formatSlot,
+  formatRange,
   getBerkeleyNow,
-  getHappeningNow,
+  getSlotStatus,
+  minutesOf,
+  type SlotStatus,
 } from '../lib/schedule';
-import type { PoolKey } from '../data/types';
+import { programIcon } from '../lib/programIcons';
+import type { PoolKey, TimeSlot } from '../data/types';
 
-const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
+
+const DAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAY_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+interface Row {
+  key: string;
+  slug: string;
+  label: string;
+  slot: TimeSlot;
+  status: SlotStatus;
+  ages: string;
+  cost: string;
+  desc: string;
+}
+
+const STATUS_PILL: Record<SlotStatus, { text: string; cls: string } | null> = {
+  live: { text: 'Open now', cls: 'text-[#1a7a43] bg-[#e7f6ec] border-[#bfe6cd]' },
+  upcoming: { text: 'Upcoming', cls: 'text-[#51606e] bg-[#eef1f4] border-[#dde3e9]' },
+  ended: { text: 'Ended', cls: 'text-[#9aa6b2] bg-[#f4f6f8] border-[#e3e8ee]' },
+  scheduled: null,
+};
 
 export function ScheduleTab() {
   const now = getBerkeleyNow();
   const [pool, setPool] = useState<PoolKey>('king');
-  const [day, setDay] = useState<number>(now.dayIndex); // default to today (Berkeley)
-  const [openProgram, setOpenProgram] = useState<string | null>(null);
+  const [day, setDay] = useState<number>(now.dayIndex);
+  const [activity, setActivity] = useState<string>('all');
+  const [openKey, setOpenKey] = useState<string | null>(null);
 
   const data = pools[pool];
   const dayKey = DAY_KEYS[day];
-
-  const programRows = Object.entries(data.schedule)
-    .map(([slug, week]) => ({ slug, slots: week[dayKey] }))
-    .filter((row) => row.slots.length > 0)
-    .map((row) => {
-      const info = programs[row.slug];
-      return {
-        slug: row.slug,
-        label: info?.label ?? row.slug,
-        slots: row.slots.map(formatSlot),
-        desc: info?.description ?? 'Description coming soon.',
-        ages: info?.ages ?? '—',
-        cost: info?.cost ?? 'See catalog',
-      };
-    });
-
   const isToday = day === now.dayIndex;
-  const { active, next } = isToday
-    ? getHappeningNow(data.schedule, programs, dayKey, now.minutes)
-    : { active: [], next: null };
 
-  const dayName = dayLabels[day];
-  const closedLabel = meta.closedDates.map(formatDate).join(' & ');
+  // Flatten every (program, slot) for this pool+day into one chronological list.
+  const allRows = useMemo<Row[]>(() => {
+    const rows: Row[] = [];
+    for (const [slug, week] of Object.entries(data.schedule)) {
+      const info = programs[slug];
+      week[dayKey].forEach((slot, i) => {
+        rows.push({
+          key: `${slug}-${i}`,
+          slug,
+          label: info?.label ?? slug,
+          slot,
+          status: getSlotStatus(slot, isToday, now.minutes),
+          ages: info?.ages ?? '—',
+          cost: info?.cost ?? 'See catalog',
+          desc: info?.description ?? 'Description coming soon.',
+        });
+      });
+    }
+    return rows.sort((a, b) => minutesOf(a.slot.start) - minutesOf(b.slot.start));
+  }, [data, dayKey, isToday, now.minutes]);
+
+  // Distinct programs available this day, for the filter dropdown.
+  const activitiesForDay = useMemo(() => {
+    const seen = new Map<string, string>();
+    for (const r of allRows) if (!seen.has(r.slug)) seen.set(r.slug, r.label);
+    return [...seen.entries()];
+  }, [allRows]);
+
+  const rows = activity === 'all' ? allRows : allRows.filter((r) => r.slug === activity);
+  const liveRows = isToday ? allRows.filter((r) => r.status === 'live') : [];
+
+  const headingDay = isToday ? 'Today' : DAY_FULL[day];
 
   return (
-    <section className="px-5 sm:px-8 py-6 sm:py-[34px]">
-      <div className="font-mono text-[11px] text-[#6f6b62] mb-1.5">TAB 01 · SCHEDULE</div>
-      <div className="text-xl sm:text-[22px] font-bold mb-1">Summer Schedule</div>
-      <div className="text-xs sm:text-[13px] text-[#6b675f] mb-5 sm:mb-6 leading-relaxed">June 8 – August 9, 2026 · all programs drop-in unless noted</div>
+    <section className="flex flex-col gap-5">
+      {/* What this is — kept compact for clarity */}
+      <p className="text-[13px] text-[#51606e] leading-relaxed">
+        When Berkeley&apos;s two public pools are open for lap swim, family swim, lessons and more — the City&apos;s PDF schedules pulled into one readable place.
+      </p>
 
-      {/* pool selector */}
-      <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-2.5 mb-5 sm:mb-[18px]">
-        <button
-          onClick={() => setPool('king')}
-          className={`focus-ring px-[18px] py-[11px] sm:py-[9px] rounded font-semibold text-[15px] sm:text-[13px] border cursor-pointer transition-colors ${pool === 'king' ? 'bg-[#3a3a37] text-[#e9e7e1] border-[#3a3a37]' : 'bg-white text-[#6b675f] border-[#d8d4cc] hover:bg-[#fbfbf9]'}`}
-        >
-          King Pool
-        </button>
-        <button
-          onClick={() => setPool('west')}
-          className={`focus-ring px-[18px] py-[11px] sm:py-[9px] rounded font-semibold text-[15px] sm:text-[13px] border cursor-pointer transition-colors ${pool === 'west' ? 'bg-[#3a3a37] text-[#e9e7e1] border-[#3a3a37]' : 'bg-white text-[#6b675f] border-[#d8d4cc] hover:bg-[#fbfbf9]'}`}
-        >
-          West Campus Pool
-        </button>
-      </div>
-
-      {/* day selector */}
-      <div className="flex overflow-x-auto gap-2 mb-[26px] sm:mb-[22px] flex-nowrap sm:flex-wrap pb-2 sm:pb-0 hide-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
-        {dayLabels.map((lbl, i) => (
+      {/* Pool segmented control */}
+      <div className="flex bg-white rounded-xl p-1 border border-[#dde3e9] shadow-sm">
+        {(['king', 'west'] as const).map((p) => (
           <button
-            key={i}
-            onClick={() => setDay(i)}
-            aria-pressed={day === i}
-            className={`focus-ring w-[52px] sm:w-12 shrink-0 h-[40px] sm:h-[34px] flex items-center cursor-pointer justify-center rounded text-[13px] sm:text-xs font-semibold border transition-colors ${day === i ? 'bg-[#33312d] text-[#e9e7e1] border-[#33312d]' : 'bg-white text-[#6b675f] border-[#d8d4cc] hover:bg-[#fbfbf9]'}`}
+            key={p}
+            onClick={() => { setPool(p); setOpenKey(null); }}
+            aria-pressed={pool === p}
+            className={`focus-ring flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-[14px] font-semibold cursor-pointer transition-colors ${
+              pool === p ? 'bg-[#2a5caa] text-white shadow-sm' : 'text-[#1f4b7a] hover:bg-[#f4f7fb]'
+            }`}
           >
-            {lbl}
+            <MapPin size={14} className="shrink-0" />
+            {pools[p].label}
           </button>
         ))}
       </div>
 
-      {/* HAPPENING NOW */}
-      {isToday && (
-          <div className="border border-[#33312d] rounded-md overflow-hidden mb-6 sm:mb-5">
-            <div className="bg-[#33312d] text-[#e9e7e1] px-[14px] py-[11px] sm:py-[9px] flex items-center gap-[9px] font-mono text-[10px] sm:text-[11px] tracking-wider sm:tracking-widest rounded-t-[5px]">
-              <span className="w-2 h-2 rounded-full bg-[#7fcaa0] shadow-[0_0_0_3px_rgba(127,202,160,0.25)] shrink-0"></span>
-              <span className="truncate">HAPPENING NOW · {data.label} · {dayName}</span>
-            </div>
-            <div className="p-4 sm:p-5 bg-[#fbfbf9]">
-              {active.length > 0 ? (
-                <div className="flex flex-col gap-3.5 sm:gap-[9px]">
-                  {active.map((a) => (
-                    <div key={a.slug} className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#33312d] shrink-0"></span>
-                      <div className="text-[15px] sm:text-[15px] font-semibold text-[#33312d] leading-tight">{a.label}</div>
-                      <div className="font-mono text-[11px] sm:text-[12px] text-[#5b574f] border border-[#d8d4cc] bg-[#f4f2ec] rounded-full px-3 py-1 sm:py-[3px]">{a.time}</div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-[13px] text-[#6b675f] leading-relaxed">
-                  {next ? `Nothing in the water right now — next up: ${next.label} at ${next.time}.` : 'No more programs scheduled here today.'}
-                </div>
-              )}
-            </div>
-          </div>
-      )}
-
-      {/* program rows */}
-      <div className="font-mono text-[10px] text-[#6f6b62] mb-3 sm:mb-2.5 leading-relaxed tracking-wide">click a program to see what it is</div>
-      <div className="border border-[#e4e1da] rounded sm:rounded-[5px] overflow-hidden">
-        {programRows.map((row) => {
-          const isOpen = openProgram === row.slug;
+      {/* Day selector */}
+      <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">
+        {DAY_ABBR.map((lbl, i) => {
+          const selected = day === i;
+          const today = i === now.dayIndex;
           return (
-            <div key={row.slug} className="border-t border-[#eeebe4] bg-[#fdfdfb] first:border-0 px-4 sm:px-5 transition-colors hover:bg-[#fafaf8]">
-              <button
-                type="button"
-                onClick={() => setOpenProgram(isOpen ? null : row.slug)}
-                aria-expanded={isOpen}
-                className="focus-ring appearance-none bg-transparent w-full text-left flex items-start sm:grid sm:grid-cols-[22px_188px_1fr] gap-3 sm:gap-4 py-4 sm:py-5 cursor-pointer"
-              >
-                <span aria-hidden="true" className="font-mono text-[17px] text-[#6f6b62] leading-none mt-[2px] sm:mt-0 w-[22px] shrink-0">{isOpen ? '–' : '+'}</span>
-                <span className="flex flex-col sm:flex-row sm:col-span-2 sm:grid sm:grid-cols-[188px_1fr] gap-2.5 sm:gap-4 flex-1 w-full">
-                  <span className="text-[15px] sm:text-[14px] font-semibold text-[#33312d] underline decoration-[#cdc9c1] underline-offset-4 decoration-2 sm:decoration-1 leading-tight pr-4 sm:pr-0">{row.label}</span>
-                  <span className="flex gap-2 flex-wrap">
-                    {row.slots.map((s, i) => (
-                       <span key={i} className="font-mono text-[11px] sm:text-[12px] text-[#5b574f] border border-[#d8d4cc] bg-[#f4f2ec] rounded-full px-3 py-1.5">{s}</span>
-                    ))}
-                  </span>
-                </span>
-              </button>
-              {isOpen && (
-                <div className="pb-5 pl-[34px] sm:pl-[38px] flex flex-col gap-3 sm:gap-2.5">
-                  <div className="text-[14px] sm:text-[13px] text-[#5b574f] max-w-[640px] leading-relaxed">{row.desc}</div>
-                  <div className="flex gap-4 sm:gap-6 flex-wrap font-mono text-[10px] sm:text-[11px] text-[#6f6b62] mt-1 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-0 border-[#eeebe4]">
-                    <div>ages · {row.ages}</div>
-                    <div>cost · {row.cost}</div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )
+            <button
+              key={i}
+              onClick={() => { setDay(i); setOpenKey(null); }}
+              aria-pressed={selected}
+              className={`focus-ring shrink-0 w-[56px] py-2 rounded-xl text-[13px] font-semibold border cursor-pointer transition-colors flex flex-col items-center gap-0.5 ${
+                selected
+                  ? 'bg-[#2a5caa] text-white border-[#2a5caa]'
+                  : 'bg-white text-[#1f4b7a] border-[#dde3e9] hover:border-[#2a5caa]'
+              }`}
+            >
+              {lbl}
+              {today && <span className={`w-1 h-1 rounded-full ${selected ? 'bg-white' : 'bg-[#2a5caa]'}`} />}
+            </button>
+          );
         })}
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mt-5 sm:mt-3.5 flex-wrap gap-2.5 sm:gap-2 bg-[#f4f2ec] sm:bg-transparent p-3 sm:p-0 rounded border border-[#e4e1da] sm:border-transparent">
-        <div className="font-mono text-[10px] sm:text-[11px] text-[#6f6b62] leading-relaxed">** limited lap lanes / space available</div>
-        {closedLabel && (
-          <div className="font-mono text-[10px] sm:text-[11px] text-[#6f6b62] leading-relaxed">closed {closedLabel}</div>
+      {/* Happening Now */}
+      {isToday && (
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-[22px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">Happening Now</h2>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#33c27f] shadow-[0_0_0_3px_rgba(51,194,127,0.25)]" />
+          </div>
+
+          {liveRows.length > 0 ? (
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4 snap-x snap-mandatory">
+              {liveRows.map((r) => (
+                <HeroCard key={r.key} row={r} poolLabel={data.label} />
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-[#dde3e9] bg-white px-5 py-4 text-[14px] text-[#51606e] leading-relaxed">
+              Nothing in the water at {data.label} right now. Check the schedule below for the next open block.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Day schedule */}
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <h2 className="font-display text-[22px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">
+            {headingDay} · {data.label}
+          </h2>
+          {activitiesForDay.length > 1 && (
+            <div className="relative">
+              <select
+                value={activity}
+                onChange={(e) => { setActivity(e.target.value); setOpenKey(null); }}
+                aria-label="Filter by activity"
+                className="focus-ring appearance-none bg-white border border-[#dde3e9] rounded-lg pl-3 pr-8 py-1.5 text-[13px] font-semibold text-[#1f4b7a] cursor-pointer hover:border-[#2a5caa]"
+              >
+                <option value="all">All activities</option>
+                {activitiesForDay.map(([slug, label]) => (
+                  <option key={slug} value={slug}>{label}</option>
+                ))}
+              </select>
+              <ChevronDown size={15} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#9aa6b2]" />
+            </div>
+          )}
+        </div>
+
+        {rows.length === 0 ? (
+          <div className="rounded-2xl border border-[#dde3e9] bg-white px-5 py-6 text-[14px] text-[#51606e]">
+            No programs scheduled at {data.label} on {headingDay}.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2.5">
+            {rows.map((r) => (
+              <ScheduleCard
+                key={r.key}
+                row={r}
+                open={openKey === r.key}
+                onToggle={() => setOpenKey(openKey === r.key ? null : r.key)}
+              />
+            ))}
+          </div>
         )}
+
+        {/* Limited legend */}
+        <div className="flex items-center gap-2 text-[12px] text-[#51606e] mt-1">
+          <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wide text-[#8a6d1a] border border-[#e7cf86] bg-[#fdf6e3] rounded-full px-2 py-0.5">Limited</span>
+          <span>Fewer lanes open — pool is shared with lessons, teams, or other programs.</span>
+        </div>
       </div>
     </section>
+  );
+}
+
+function HeroCard({ row, poolLabel }: { row: Row; poolLabel: string }) {
+  return (
+    <div className="snap-start shrink-0 w-[88%] sm:w-[360px] relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white shadow-md">
+      {/* decorative waves */}
+      <svg className="absolute inset-x-0 bottom-0 w-full opacity-20" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 40 C 60 10, 120 70, 200 40 S 340 10, 400 40 L400 80 L0 80 Z" fill="white" />
+        <path d="M0 55 C 70 30, 140 80, 200 55 S 330 30, 400 55 L400 80 L0 80 Z" fill="white" opacity="0.6" />
+      </svg>
+      <div className="relative p-5 flex flex-col gap-3">
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[10px] font-semibold uppercase tracking-wider bg-white/15 border border-white/25 rounded px-2 py-0.5">{poolLabel}</span>
+          <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide bg-[#33c27f] text-[#06351f] rounded-full px-2.5 py-0.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#06351f]" /> Open now
+          </span>
+        </div>
+        <div>
+          <div className="font-display text-[26px] font-semibold uppercase tracking-wide leading-none">{row.label}</div>
+          <div className="text-[15px] font-medium text-white/90 mt-1.5">{formatRange(row.slot)}</div>
+        </div>
+        <p className="text-[13px] text-white/85 leading-relaxed">{row.desc}</p>
+        <a
+          href={OFFICIAL_CATALOG}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="focus-ring mt-1 self-start inline-flex items-center gap-1.5 bg-white text-[#16335c] rounded-lg px-4 h-10 text-[14px] font-semibold no-underline hover:bg-[#eaf1fa] transition-colors"
+        >
+          Register on City site
+          <ExternalLink size={14} />
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function ScheduleCard({ row, open, onToggle }: { row: Row; open: boolean; onToggle: () => void }) {
+  const Icon = programIcon(row.slug);
+  const pill = STATUS_PILL[row.status];
+  const dim = row.status === 'ended';
+
+  return (
+    <div
+      className={`rounded-2xl border bg-white transition-shadow ${
+        row.status === 'live' ? 'border-[#bfe6cd] shadow-[0_1px_5px_rgba(51,194,127,0.15)]' : 'border-[#dde3e9]'
+      } ${dim ? 'opacity-60' : ''}`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        className="focus-ring appearance-none bg-transparent w-full text-left flex items-center gap-3 p-3.5 cursor-pointer"
+      >
+        <div className="h-11 w-11 shrink-0 rounded-xl bg-[#eaf1fa] text-[#2a5caa] flex items-center justify-center">
+          <Icon size={20} strokeWidth={2} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[13px] font-semibold text-[#51606e]">{formatRange(row.slot)}</span>
+            {row.slot.limited && (
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#8a6d1a] border border-[#e7cf86] bg-[#fdf6e3] rounded-full px-2 py-0.5">Limited</span>
+            )}
+          </div>
+          <div className="text-[16px] font-bold text-[#16335c] leading-tight truncate">{row.label}</div>
+          <div className="flex items-center gap-1 text-[12px] text-[#7a8794] mt-0.5">
+            <Tag size={11} className="shrink-0" />
+            <span className="truncate">Ages {row.ages}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {pill && (
+            <span className={`text-[11px] font-semibold rounded-full px-2.5 py-1 border ${pill.cls}`}>{pill.text}</span>
+          )}
+          <ChevronDown size={18} className={`text-[#9aa6b2] transition-transform ${open ? 'rotate-180' : ''}`} />
+        </div>
+      </button>
+      {open && (
+        <div className="px-3.5 pb-4 pl-[62px] flex flex-col gap-3">
+          <p className="text-[14px] text-[#3a4651] leading-relaxed">{row.desc}</p>
+          <div className="flex gap-6 flex-wrap text-[13px] text-[#51606e] pt-2 border-t border-[#eef1f4]">
+            <div><span className="font-semibold text-[#1a1a1a]">Ages:</span> {row.ages}</div>
+            <div><span className="font-semibold text-[#1a1a1a]">Cost:</span> {row.cost}</div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

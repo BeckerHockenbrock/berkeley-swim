@@ -73,11 +73,20 @@ export interface Lesson {
   description: string;
   prereq: string;
   cost: string;
-  enrollLink: string;
 }
 
 export type LessonCategory = 'learn-to-swim' | 'preschool';
-export type Lessons = Record<LessonCategory, Lesson[]>;
+
+/**
+ * Every lesson level is sold on the same City catalog page, so there is one
+ * shared `registerUrl` rather than a per-lesson link. The cards exist to help a
+ * swimmer pick the right level before they register.
+ */
+export interface Lessons {
+  /** Shared City catalog URL for all swim-lesson registration. */
+  registerUrl: string;
+  categories: Record<LessonCategory, Lesson[]>;
+}
 
 /** `null` means the price has not been confirmed yet → render "price to confirm". */
 export type PassPrice = { resident: string; nonResident: string } | null;

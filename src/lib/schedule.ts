@@ -166,9 +166,23 @@ export function formatRange(slot: TimeSlot): string {
   return `${formatTime(slot.start)}–${formatTime(slot.end)}`;
 }
 
-/** Like {@link formatRange} but appends the legacy `**` marker when limited. */
-export function formatSlot(slot: TimeSlot): string {
-  return slot.limited ? `${formatRange(slot)}**` : formatRange(slot);
+/**
+ * Where a single slot sits relative to the current Berkeley moment.
+ * `'scheduled'` is used for any day other than today (no live/ended sense).
+ */
+export type SlotStatus = 'live' | 'upcoming' | 'ended' | 'scheduled';
+
+/**
+ * Classify a slot for the schedule card badge. Pure: the caller decides whether
+ * the selected day is actually today and supplies the current minute.
+ */
+export function getSlotStatus(slot: TimeSlot, isToday: boolean, nowMinutes: number): SlotStatus {
+  if (!isToday) return 'scheduled';
+  const start = minutesOf(slot.start);
+  const end = minutesOf(slot.end);
+  if (nowMinutes >= start && nowMinutes < end) return 'live';
+  if (nowMinutes < start) return 'upcoming';
+  return 'ended';
 }
 
 const MONTHS = [

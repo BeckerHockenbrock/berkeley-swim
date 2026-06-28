@@ -1,9 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Teko:wght@500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Teko", "Source Sans 3", ui-sans-serif, sans-serif;
+
+  /* City of Berkeley brand palette */
+  --color-bk-blue: #2a5caa;
+  --color-bk-blue-dark: #224a89;
+  --color-bk-navy: #16335c;
+  --color-bk-gold: #d5ad1a;
+  --color-bk-red: #a42d36;
+  --color-bk-green: #5f7e2f;
+  --color-bk-ink: #1a1a1a;
+  --color-bk-slate: #51606e;
+  --color-bk-line: #d7dce1;
+  --color-bk-haze: #eef1f4;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-[#1a1a1a] antialiased;
+  }
+  /* Condensed Berkeley-style display headings */
+  .font-display {
+    letter-spacing: 0.01em;
+    line-height: 1.02;
+  }
 }
 
 @layer utilities {
@@ -15,6 +38,6 @@
     display: none;
   }
   .focus-ring {
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1f4b7a] focus-visible:ring-offset-2;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2a5caa] focus-visible:ring-offset-2;
   }
 }

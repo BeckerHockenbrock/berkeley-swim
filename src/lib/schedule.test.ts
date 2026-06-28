@@ -1,11 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import {
   DAY_KEYS,
-  formatSlot,
+  formatRange,
   formatTime,
   getBerkeleyNow,
   getHappeningNow,
   getScheduleStatus,
+  getSlotStatus,
 } from './schedule';
 import type { Meta, PoolSchedule, ProgramMap, TimeSlot, WeekSchedule } from '../data/types';
 
@@ -121,6 +122,28 @@ describe('getScheduleStatus', () => {
   });
 });
 
+describe('getSlotStatus', () => {
+  const slot: TimeSlot = { start: '12:00', end: '14:00' };
+
+  it('is scheduled for any day that is not today', () => {
+    expect(getSlotStatus(slot, false, 13 * 60)).toBe('scheduled');
+  });
+
+  it('is live while the current minute is inside the slot', () => {
+    expect(getSlotStatus(slot, true, 13 * 60)).toBe('live');
+    expect(getSlotStatus(slot, true, 12 * 60)).toBe('live'); // inclusive start
+  });
+
+  it('is upcoming before the slot starts', () => {
+    expect(getSlotStatus(slot, true, 11 * 60)).toBe('upcoming');
+  });
+
+  it('is ended at or after the slot end', () => {
+    expect(getSlotStatus(slot, true, 14 * 60)).toBe('ended'); // exclusive end
+    expect(getSlotStatus(slot, true, 15 * 60)).toBe('ended');
+  });
+});
+
 describe('formatters', () => {
   it('formats 24h times into am/pm', () => {
     expect(formatTime('06:00')).toBe('6:00am');
@@ -129,8 +152,8 @@ describe('formatters', () => {
     expect(formatTime('12:00')).toBe('12:00pm');
   });
 
-  it('appends ** only for limited slots', () => {
-    expect(formatSlot({ start: '06:00', end: '07:30', limited: true })).toBe('6:00am–7:30am**');
-    expect(formatSlot({ start: '07:30', end: '09:30' })).toBe('7:30am–9:30am');
+  it('formats a slot range without any limited marker', () => {
+    expect(formatRange({ start: '06:00', end: '07:30', limited: true })).toBe('6:00am–7:30am');
+    expect(formatRange({ start: '07:30', end: '09:30' })).toBe('7:30am–9:30am');
   });
 });

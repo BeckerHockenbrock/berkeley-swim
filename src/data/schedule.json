@@ -888,74 +888,69 @@
     }
   },
   "lessons": {
-    "learn-to-swim": [
-      {
-        "level": "Level 1",
-        "title": "Introduction to Water Skills",
-        "description": "Gain confidence in the pool environment — floating and kicking with support, blowing bubbles, and water-safety skills.",
-        "prereq": "No prior experience necessary.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 2",
-        "title": "Fundamental Aquatic Skills",
-        "description": "Learn independent locomotion on front and back, building a foundation for swimming strokes.",
-        "prereq": "Comfortable kicking, floating, and blowing bubbles without instructor support.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 3",
-        "title": "Stroke Development",
-        "description": "Learn side-breathing for the front crawl, develop further stroke skills, and get introduced to deep water.",
-        "prereq": "Independent locomotion; can swim 10 yards on front and back.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 4",
-        "title": "Stroke Improvement",
-        "description": "Improve proficiency and endurance over greater distances. Introduces back crawl, butterfly, and a simple open turn at the wall.",
-        "prereq": "Builds on Level 3 skills.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 5 / 6",
-        "title": "Stroke Refinement",
-        "description": "Refine all six strokes over greater distances and learn flip turns on front and back.",
-        "prereq": "Can swim 25 yds front crawl with breathing and 25 yds back crawl.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      }
-    ],
-    "preschool": [
-      {
-        "level": "Level 1",
-        "title": "Introduction to Water Skills",
-        "description": "Floating and kicking with support, blowing bubbles, and learning water-safety skills.",
-        "prereq": "No prior experience necessary.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 2",
-        "title": "Elementary Water Skills",
-        "description": "Floating, kicking, and bobbing with support, plus water-safety skills.",
-        "prereq": "Comfort in the water; can kick, float, and blow bubbles with instructor support.",
-        "cost": "King $44–$88 · West Campus $88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      },
-      {
-        "level": "Level 3",
-        "title": "Basic Water Skills",
-        "description": "Locomotion and treading water independently while learning water-safety skills.",
-        "prereq": "Comfortable kicking, floating, and bubble-blowing without instructor support.",
-        "cost": "King Pool only · $44–$88",
-        "enrollLink": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D"
-      }
-    ]
+    "registerUrl": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D",
+    "categories": {
+      "learn-to-swim": [
+        {
+          "level": "Level 1",
+          "title": "Introduction to Water Skills",
+          "description": "Gain confidence in the pool environment — floating and kicking with support, blowing bubbles, and water-safety skills.",
+          "prereq": "No prior experience necessary.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 2",
+          "title": "Fundamental Aquatic Skills",
+          "description": "Learn independent locomotion on front and back, building a foundation for swimming strokes.",
+          "prereq": "Comfortable kicking, floating, and blowing bubbles without instructor support.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 3",
+          "title": "Stroke Development",
+          "description": "Learn side-breathing for the front crawl, develop further stroke skills, and get introduced to deep water.",
+          "prereq": "Independent locomotion; can swim 10 yards on front and back.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 4",
+          "title": "Stroke Improvement",
+          "description": "Improve proficiency and endurance over greater distances. Introduces back crawl, butterfly, and a simple open turn at the wall.",
+          "prereq": "Builds on Level 3 skills.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 5 / 6",
+          "title": "Stroke Refinement",
+          "description": "Refine all six strokes over greater distances and learn flip turns on front and back.",
+          "prereq": "Can swim 25 yds front crawl with breathing and 25 yds back crawl.",
+          "cost": "King $44–$88 · West Campus $88"
+        }
+      ],
+      "preschool": [
+        {
+          "level": "Level 1",
+          "title": "Introduction to Water Skills",
+          "description": "Floating and kicking with support, blowing bubbles, and learning water-safety skills.",
+          "prereq": "No prior experience necessary.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 2",
+          "title": "Elementary Water Skills",
+          "description": "Floating, kicking, and bobbing with support, plus water-safety skills.",
+          "prereq": "Comfort in the water; can kick, float, and blow bubbles with instructor support.",
+          "cost": "King $44–$88 · West Campus $88"
+        },
+        {
+          "level": "Level 3",
+          "title": "Basic Water Skills",
+          "description": "Locomotion and treading water independently while learning water-safety skills.",
+          "prereq": "Comfortable kicking, floating, and bubble-blowing without instructor support.",
+          "cost": "King Pool only · $44–$88"
+        }
+      ]
+    }
   },
   "passes": [
     {
