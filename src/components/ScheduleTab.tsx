@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, ExternalLink, Tag, MapPin } from 'lucide-react';
-import { pools, programs } from '../data/loadSchedule';
+import { meta, passes, pools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
+  formatDate,
   formatRange,
   getBerkeleyNow,
   getSlotStatus,
@@ -87,6 +88,10 @@ export function ScheduleTab() {
   const rows = activity === 'all' ? scheduleRows : scheduleRows.filter((r) => r.slug === activity);
   const headingDay = isToday ? 'Today' : DAY_FULL[day];
 
+  // The "Register" CTA on the live cards points at the 10-Swim Pass (best value
+  // to get in), pulled from the passes data so it stays in sync.
+  const registerLink = passes.find((p) => p.name === '10-Swim Pass')?.link ?? OFFICIAL_CATALOG;
+
   return (
     <section className="flex flex-col gap-5">
       {/* Happening Now — both pools, side by side */}
@@ -104,7 +109,7 @@ export function ScheduleTab() {
                 <span className="truncate">{label}</span>
               </div>
               {liveRows.length > 0 ? (
-                liveRows.map((r) => <HeroCard key={r.key} row={r} />)
+                liveRows.map((r) => <HeroCard key={r.key} row={r} href={registerLink} />)
               ) : (
                 <div className="rounded-2xl border border-[#dde3e9] bg-white px-3 py-3 text-[12px] text-[#51606e]">
                   Nothing open now.
@@ -202,12 +207,24 @@ export function ScheduleTab() {
           <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wide text-[#8a6d1a] border border-[#e7cf86] bg-[#fdf6e3] rounded-full px-2 py-0.5">Limited</span>
           <span>Fewer lanes open — pool is shared with lessons, teams, or other programs.</span>
         </div>
+
+        <p className="text-[12px] text-[#7a8794] leading-relaxed mt-1">
+          Community-maintained · times last checked {formatDate(meta.lastUpdated)}, {meta.lastUpdated.slice(0, 4)}.{' '}
+          <a
+            href={meta.sources[pool]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#2a5caa] no-underline hover:underline"
+          >
+            Verify on the official {pools[pool].label} schedule ↗
+          </a>
+        </p>
       </div>
     </section>
   );
 }
 
-function HeroCard({ row }: { row: Row }) {
+function HeroCard({ row, href }: { row: Row; href: string }) {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white shadow-md">
       <svg className="absolute inset-x-0 bottom-0 w-full opacity-20" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
@@ -221,7 +238,7 @@ function HeroCard({ row }: { row: Row }) {
         <div className="font-display text-[18px] font-semibold uppercase tracking-wide leading-tight">{row.label}</div>
         <div className="text-[13px] font-medium text-white/90">{formatRange(row.slot)}</div>
         <a
-          href={OFFICIAL_CATALOG}
+          href={href}
           target="_blank"
           rel="noopener noreferrer"
           className="focus-ring mt-0.5 self-start inline-flex items-center gap-1 text-[12px] font-semibold text-white/95 no-underline hover:text-white"
