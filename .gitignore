@@ -11,6 +11,13 @@ node_modules
 dist*
 *.local
 
+# Python (parser tooling)
+venv/
+.venv/
+scratch/
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

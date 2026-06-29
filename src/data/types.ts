@@ -146,6 +146,8 @@ export interface PoolSeason {
   lastUpdated: IsoDate;
   timezone: string;
   closedDates: IsoDate[];
+  /** Single-program cancellations: program slug → dates that program is off. */
+  programClosures: Record<string, IsoDate[]>;
   source: string;
   schedule: PoolSchedule;
 }
@@ -159,6 +161,7 @@ export interface ResolvedPool {
   validThrough: IsoDate;
   lastUpdated: IsoDate;
   closedDates: IsoDate[];
+  programClosures: Record<string, IsoDate[]>;
   source: string;
   schedule: PoolSchedule;
 }

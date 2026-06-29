@@ -8,6 +8,7 @@ import {
   formatRange,
   formatTime,
   getBerkeleyNow,
+  getScheduleStatus,
   getSlotStatus,
   minutesOf,
   type SlotStatus,
@@ -46,10 +47,12 @@ export function ScheduleTab() {
   const [openKey, setOpenKey] = useState<string | null>(null);
 
   const buildRows = useMemo(() => {
-    return (poolKey: PoolKey, dKey: DayKey, today: boolean): Row[] => {
+    return (poolKey: PoolKey, dKey: DayKey, dateISO: string, isToday: boolean): Row[] => {
       const sched = pools[poolKey].schedule;
+      const closures = pools[poolKey].programClosures;
       const rows: Row[] = [];
       for (const [slug, week] of Object.entries(sched)) {
+        if (closures[slug]?.includes(dateISO)) continue; // program cancelled this date
         const info = programs[slug];
         week[dKey].forEach((slot, i) => {
           rows.push({
@@ -57,7 +60,7 @@ export function ScheduleTab() {
             slug,
             label: info?.label ?? slug,
             slot,
-            status: getSlotStatus(slot, today, now.minutes),
+            status: getSlotStatus(slot, isToday, now.minutes),
             ages: info?.ages ?? '—',
             cost: info?.cost ?? 'See catalog',
             desc: info?.description ?? 'Description coming soon.',
@@ -76,7 +79,7 @@ export function ScheduleTab() {
       const dayIndex = (now.dayIndex + offset) % 7;
       const dateISO = addDaysIso(now.dateISO, offset);
       if (pools[pk].closedDates.includes(dateISO)) continue;
-      const dayRows = buildRows(pk, DAY_KEYS[dayIndex], offset === 0);
+      const dayRows = buildRows(pk, DAY_KEYS[dayIndex], dateISO, offset === 0);
       const cand = offset === 0 ? dayRows.find((r) => r.status === 'upcoming') : dayRows[0];
       if (cand) return { row: cand, offset, dayIndex };
     }
@@ -87,17 +90,19 @@ export function ScheduleTab() {
   // pool/day chosen for the schedule list below.
   const liveByPool = POOL_KEYS.map((pk) => {
     const closedToday = pools[pk].closedDates.includes(now.dateISO);
-    const live = closedToday ? [] : buildRows(pk, now.dayKey, true).filter((r) => r.status === 'live');
+    const live = closedToday ? [] : buildRows(pk, now.dayKey, now.dateISO, true).filter((r) => r.status === 'live');
     return { poolKey: pk, label: pools[pk].label, live, nextOpen: findNextOpen(pk) };
   });
 
   const nextDayLabel = (offset: number, dayIndex: number) =>
     offset === 0 ? 'today' : offset === 1 ? 'tomorrow' : DAY_FULL[dayIndex];
 
-  // Schedule list: the selected pool + selected day.
+  // Schedule list: the selected pool + selected day. The selected day maps to an
+  // actual date in the current week, so date-specific program cancellations apply.
   const dayKey = DAY_KEYS[day];
   const isToday = day === now.dayIndex;
-  const scheduleRows = buildRows(pool, dayKey, isToday);
+  const selectedDateISO = addDaysIso(now.dateISO, day - now.dayIndex);
+  const scheduleRows = buildRows(pool, dayKey, selectedDateISO, isToday);
 
   const activitiesForDay = useMemo(() => {
     const seen = new Map<string, string>();
@@ -107,6 +112,15 @@ export function ScheduleTab() {
 
   const rows = activity === 'all' ? scheduleRows : scheduleRows.filter((r) => r.slug === activity);
   const headingDay = isToday ? 'Today' : DAY_FULL[day];
+
+  // Freshness of the SELECTED pool's schedule (not a global claim).
+  const poolStatus = getScheduleStatus(pools[pool], now.dateISO);
+  const freshnessNote =
+    poolStatus.kind === 'expired'
+      ? `Showing ${pools[pool].label}'s most recent schedule (${pools[pool].season}) — confirm today's times on the official catalog.`
+      : poolStatus.kind === 'upcoming'
+        ? `${pools[pool].label}'s ${pools[pool].season} schedule starts ${formatDate(poolStatus.validFrom)}.`
+        : null;
 
   // The "Register" CTA on the live cards points at the 10-Swim Pass (best value
   // to get in), pulled from the passes data so it stays in sync.
@@ -180,6 +194,13 @@ export function ScheduleTab() {
             </button>
           ))}
         </div>
+
+        {freshnessNote && (
+          <div className="rounded-xl bg-[#fff6e0] border border-[#ecd9a0] text-[#6b5410] px-3.5 py-2.5 text-[12px] leading-snug flex gap-2 items-start">
+            <CalendarOff size={14} className="shrink-0 mt-0.5" />
+            <span>{freshnessNote}</span>
+          </div>
+        )}
 
         {/* Day selector */}
         <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4">

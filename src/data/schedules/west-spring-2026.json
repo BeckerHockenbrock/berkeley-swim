@@ -13,6 +13,7 @@
     "2026-06-06",
     "2026-06-07"
   ],
+  "programClosures": {},
   "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/west-campus-pool",
   "schedule": {
     "lap-swim": {
@@ -90,8 +91,28 @@
           "end": "19:00"
         }
       ],
-      "sat": [],
-      "sun": []
+      "sat": [
+        {
+          "start": "14:30",
+          "end": "16:30",
+          "limited": true
+        },
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "09:00"
+        },
+        {
+          "start": "09:00",
+          "end": "12:00",
+          "limited": true
+        }
+      ]
     },
     "aqua-zumba": {
       "mon": [],
@@ -110,7 +131,7 @@
     "senior-exercise": {
       "mon": [
         {
-          "start": "00:00",
+          "start": "10:00",
           "end": "11:00"
         }
       ],
@@ -142,10 +163,30 @@
       "sun": []
     },
     "swim-lessons": {
-      "mon": [],
-      "tue": [],
-      "wed": [],
-      "thu": [],
+      "mon": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
       "fri": [],
       "sat": [],
       "sun": []
@@ -201,17 +242,66 @@
           "end": "19:00"
         }
       ],
-      "sat": [],
-      "sun": []
+      "sat": [
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        }
+      ]
     },
     "family-swim": {
-      "mon": [],
-      "tue": [],
-      "wed": [],
-      "thu": [],
-      "fri": [],
-      "sat": [],
-      "sun": []
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        }
+      ]
     },
     "community-swim": {
       "mon": [],
@@ -219,8 +309,18 @@
       "wed": [],
       "thu": [],
       "fri": [],
-      "sat": [],
-      "sun": []
+      "sat": [
+        {
+          "start": "14:30",
+          "end": "16:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "10:00",
+          "end": "12:00"
+        }
+      ]
     },
     "shower-program": {
       "mon": [

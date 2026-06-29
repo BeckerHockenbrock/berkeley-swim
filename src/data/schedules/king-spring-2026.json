@@ -14,6 +14,7 @@
     "2026-06-06",
     "2026-06-07"
   ],
+  "programClosures": {},
   "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/king-pool",
   "schedule": {
     "lap-swim": {
@@ -139,11 +140,19 @@
       ],
       "tue": [
         {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
           "start": "18:30",
           "end": "20:00"
         }
       ],
       "wed": [
+        {
+          "start": "06:00",
+          "end": "12:30"
+        },
         {
           "start": "18:00",
           "end": "20:00"
@@ -151,11 +160,19 @@
       ],
       "thu": [
         {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
           "start": "18:30",
           "end": "20:00"
         }
       ],
       "fri": [
+        {
+          "start": "06:00",
+          "end": "12:30"
+        },
         {
           "start": "18:00",
           "end": "20:00"
@@ -279,7 +296,12 @@
           "end": "12:00"
         }
       ],
-      "sun": []
+      "sun": [
+        {
+          "start": "12:00",
+          "end": "13:30"
+        }
+      ]
     }
   }
 }

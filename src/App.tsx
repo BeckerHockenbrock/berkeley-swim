@@ -31,18 +31,16 @@ export default function App() {
   const now = getBerkeleyNow();
   const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
 
-  // Each pool can be on its own season, so judge data freshness per pool.
-  const poolStatuses = [pools.king, pools.west].map((p) => getScheduleStatus(p, now.dateISO));
-  const bothClosed = poolStatuses.every((s) => s.kind === 'closed');
-  const expired = poolStatuses.find((s) => s.kind === 'expired');
-  const upcoming = poolStatuses.find((s) => s.kind === 'upcoming');
+  // Only a genuine all-pools event belongs in the global banner. Per-pool data
+  // freshness (expired / upcoming) is shown inside the Schedule tab against the
+  // pool the user actually selected — a global banner there would mislead during
+  // a staggered changeover (one pool active, the other not yet started).
+  const bothClosed = [pools.king, pools.west].every(
+    (p) => getScheduleStatus(p, now.dateISO).kind === 'closed',
+  );
   const notice = bothClosed
     ? { tone: 'closed' as const, text: `Both pools are closed today, ${formatDate(now.dateISO)}.` }
-    : expired
-      ? { tone: 'warn' as const, text: `Showing the most recent schedule we have — confirm today's times on the official catalog.` }
-      : upcoming && upcoming.kind === 'upcoming'
-        ? { tone: 'warn' as const, text: `This season's schedule doesn't take effect until ${formatDate(upcoming.validFrom)}.` }
-        : null;
+    : null;
 
   return (
     <div className="min-h-screen bg-[#eef1f5] text-[#1a1a1a] font-sans flex flex-col">

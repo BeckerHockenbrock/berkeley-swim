@@ -37,8 +37,14 @@ SEASON_BY_MONTH = {3: "Spring", 4: "Spring", 5: "Spring", 6: "Summer", 7: "Summe
                    8: "Summer", 9: "Fall", 10: "Fall", 11: "Fall",
                    12: "Winter", 1: "Winter", 2: "Winter"}
 
-# A time range, e.g. "6:00am-7:30am**" or "4:30pm–6:30pm" (hyphen OR en/em dash).
-TIME_RE = re.compile(r"^(\d{1,2}):(\d{2})(am|pm)[-–—](\d{1,2}):(\d{2})(am|pm)(\*\*)?$")
+# A time range. Tolerant of split tokens and whitespace around the dash / am-pm,
+# because some PDFs render "4:30pm – 6:30pm" (spaced) which pdfplumber splits into
+# separate words. We scan joined cell text with `finditer`, not whole tokens.
+# e.g. "6:00am-7:30am**", "4:30pm – 6:30pm", "7:30am -12:30pm".
+RANGE_RE = re.compile(
+    r"(\d{1,2}):(\d{2})\s*(am|pm)\s*[-–—]\s*(\d{1,2}):(\d{2})\s*(am|pm)\s*(\*\*)?",
+    re.IGNORECASE,
+)
 
 # Program label (lowercased) → slug. First keyword hit wins.
 SLUG_RULES = [
@@ -122,26 +128,41 @@ def parse_grid(page, words) -> dict:
     header_y = min(w["top"] for w in words if w["text"] in HEADERS)
     rows = [(bounds[i], bounds[i + 1]) for i in range(len(bounds) - 1) if bounds[i] >= header_y + 3]
 
+    # Left edge of the Monday column = mirror of its right edge. Tokens left of
+    # this are the program-label column. (A fixed inset clipped Monday cells whose
+    # left-aligned start time, e.g. "9:00am", crept toward the label column.)
+    label_boundary = centers[0] - (centers[1] - centers[0]) / 2
+
     schedule: dict = {}
     for y0, y1 in rows:
         band = [w for w in words if y0 - 1 <= w["top"] < y1 - 1]
         label_words = sorted(
-            (w for w in band if (w["x0"] + w["x1"]) / 2 < centers[0] - 20),
+            (w for w in band if (w["x0"] + w["x1"]) / 2 < label_boundary),
             key=lambda w: (w["top"], w["x0"]),
         )
         slug = slugify(" ".join(w["text"] for w in label_words))
         if not slug:
             continue
         week = schedule.setdefault(slug, {d: [] for d in DAYS})
+        # Group every token into its day column, then scan the joined cell text.
+        # Joining first means a range split across tokens ("4:30pm", "–", "6:30pm")
+        # is reassembled before matching.
+        columns: dict[str, list] = {d: [] for d in DAYS}
         for w in band:
-            m = TIME_RE.match(w["text"])
-            if not m:
+            xc = (w["x0"] + w["x1"]) / 2
+            if xc < label_boundary:  # skip the program-label column
                 continue
-            day = column_of((w["x0"] + w["x1"]) / 2, centers)
-            slot = {"start": to_24h(m[1], m[2], m[3]), "end": to_24h(m[4], m[5], m[6])}
-            if m[7]:
-                slot["limited"] = True
-            week[day].append(slot)
+            columns[column_of(xc, centers)].append(w)
+        for day, toks in columns.items():
+            toks.sort(key=lambda w: (round(w["top"]), w["x0"]))
+            # Join WITHOUT spaces: pdfplumber sometimes splits a number ("10:00am"
+            # → "1" + "0:00am..."), and ranges stay separable by their own dashes.
+            joined = "".join(w["text"] for w in toks)
+            for m in RANGE_RE.finditer(joined):
+                slot = {"start": to_24h(m[1], m[2], m[3].lower()), "end": to_24h(m[4], m[5], m[6].lower())}
+                if m[7]:
+                    slot["limited"] = True
+                week[day].append(slot)
     for week in schedule.values():
         for day in DAYS:
             week[day].sort(key=lambda s: s["start"])
@@ -164,6 +185,28 @@ def parse_closed_dates(text: str, year: int, start_month: int) -> list[str]:
             for day in range(int(d1), int(d2 or d1) + 1):
                 dates.add(f"{y:04d}-{month:02d}-{day:02d}")
     return sorted(dates)
+
+
+def parse_program_closures(text: str, year: int, start_month: int) -> dict[str, list[str]]:
+    """Single-program cancellations from prose like
+    'No Community Swim on Friday, July 10, for the Derby Day Event.' These cancel
+    one program on one date — NOT a full-pool closure."""
+    out: dict[str, list[str]] = {}
+    pattern = r"No\s+([A-Za-z][A-Za-z ]+?)\s+on\s+(?:[A-Za-z]+,?\s+)?([A-Za-z]+)\s+(\d{1,2})(?:\s*[-–—]\s*(\d{1,2}))?"
+    for prog, mon, d1, d2 in re.findall(pattern, text):
+        slug = slugify(prog.strip())
+        month = MONTHS.get(mon.lower())
+        if not slug or not month:
+            continue
+        y = year + 1 if month < start_month else year
+        for day in range(int(d1), int(d2 or d1) + 1):
+            iso = f"{y:04d}-{month:02d}-{day:02d}"
+            out.setdefault(slug, [])
+            if iso not in out[slug]:
+                out[slug].append(iso)
+    for slug in out:
+        out[slug].sort()
+    return out
 
 
 def parse_pdf(path: Path) -> dict:
@@ -204,6 +247,7 @@ def parse_pdf(path: Path) -> dict:
         "lastUpdated": last_updated,
         "timezone": "America/Los_Angeles",
         "closedDates": parse_closed_dates(text, int(valid_from[:4]), start_month),
+        "programClosures": parse_program_closures(text, int(valid_from[:4]), start_month),
         "source": source,
         "schedule": parse_grid(page, words),
     }

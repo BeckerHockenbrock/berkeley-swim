@@ -50,6 +50,7 @@ function resolvePool(pool: PoolKey, todayISO: string): ResolvedPool {
     validThrough: chosen.validThrough,
     lastUpdated: chosen.lastUpdated,
     closedDates: chosen.closedDates,
+    programClosures: chosen.programClosures ?? {},
     source: chosen.source,
     schedule: chosen.schedule,
   };
