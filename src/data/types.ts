@@ -94,15 +94,22 @@ export type PassPrice = { resident: string; nonResident: string } | null;
 /**
  * How you actually get into the pool with this pass:
  * - `name`: account-based pass (10-swim, monthly) — give your name at the desk.
- * - `barcode`: single ticket (daily, premium) — scan the barcode emailed to you.
+ * - `barcode`: single ticket (daily) — scan the barcode emailed to you.
  */
 export type PassEntry = 'name' | 'barcode';
+
+/**
+ * `premium` passes additionally cover Berkeley Aquatic Masters & Senior
+ * Exercise; `standard` passes cover the regular drop-in programs.
+ */
+export type PassTier = 'standard' | 'premium';
 
 export interface Pass {
   name: string;
   description: string;
   price: PassPrice;
   entry: PassEntry;
+  tier: PassTier;
   featured: boolean;
   /** `false` until the value has been checked against the official catalog. */
   verified: boolean;
