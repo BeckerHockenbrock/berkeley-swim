@@ -169,10 +169,25 @@ def parse_grid(page, words) -> dict:
     return schedule
 
 
-def parse_closed_dates(text: str, year: int, start_month: int) -> list[str]:
-    """Best-effort closure dates from prose like
+def resolve_in_season(month: int, day: int, valid_from: str, valid_through: str) -> str | None:
+    """Return the ISO date for month/day in whichever schedule year keeps it
+    within [valid_from, valid_through], or None if it falls outside the season.
+
+    This both handles year-spanning schedules (a January closure in a Dec–Feb
+    winter schedule) AND drops out-of-range notes — e.g. a shared PDF footer
+    mentioning 'March 30' on a schedule that doesn't start until April. (The old
+    `year + 1 if month < start_month` heuristic mis-dated such notes.)"""
+    for y in {int(valid_from[:4]), int(valid_through[:4])}:
+        iso = f"{y:04d}-{month:02d}-{day:02d}"
+        if valid_from <= iso <= valid_through:
+            return iso
+    return None
+
+
+def parse_closed_dates(text: str, valid_from: str, valid_through: str) -> list[str]:
+    """Best-effort full-pool closure dates from prose like
     'closed for city holidays on March 30, May 18, and May 25.' and
-    'closed from June 6-7 ...'. Ranges are expanded."""
+    'closed from June 6-7 ...'. Ranges are expanded; out-of-season dates dropped."""
     dates: set[str] = set()
     # Only the date list that directly follows a "closed ... on/from" phrase, up
     # to the next period — so the title's date range can't leak in.
@@ -181,13 +196,14 @@ def parse_closed_dates(text: str, year: int, start_month: int) -> list[str]:
             month = MONTHS.get(mon.lower())
             if not month:
                 continue
-            y = year + 1 if month < start_month else year
             for day in range(int(d1), int(d2 or d1) + 1):
-                dates.add(f"{y:04d}-{month:02d}-{day:02d}")
+                iso = resolve_in_season(month, day, valid_from, valid_through)
+                if iso:
+                    dates.add(iso)
     return sorted(dates)
 
 
-def parse_program_closures(text: str, year: int, start_month: int) -> dict[str, list[str]]:
+def parse_program_closures(text: str, valid_from: str, valid_through: str) -> dict[str, list[str]]:
     """Single-program cancellations from prose like
     'No Community Swim on Friday, July 10, for the Derby Day Event.' These cancel
     one program on one date — NOT a full-pool closure."""
@@ -198,11 +214,9 @@ def parse_program_closures(text: str, year: int, start_month: int) -> dict[str, 
         month = MONTHS.get(mon.lower())
         if not slug or not month:
             continue
-        y = year + 1 if month < start_month else year
         for day in range(int(d1), int(d2 or d1) + 1):
-            iso = f"{y:04d}-{month:02d}-{day:02d}"
-            out.setdefault(slug, [])
-            if iso not in out[slug]:
+            iso = resolve_in_season(month, day, valid_from, valid_through)
+            if iso and iso not in out.setdefault(slug, []):
                 out[slug].append(iso)
     for slug in out:
         out[slug].sort()
@@ -246,8 +260,8 @@ def parse_pdf(path: Path) -> dict:
         "validThrough": valid_through,
         "lastUpdated": last_updated,
         "timezone": "America/Los_Angeles",
-        "closedDates": parse_closed_dates(text, int(valid_from[:4]), start_month),
-        "programClosures": parse_program_closures(text, int(valid_from[:4]), start_month),
+        "closedDates": parse_closed_dates(text, valid_from, valid_through),
+        "programClosures": parse_program_closures(text, valid_from, valid_through),
         "source": source,
         "schedule": parse_grid(page, words),
     }
