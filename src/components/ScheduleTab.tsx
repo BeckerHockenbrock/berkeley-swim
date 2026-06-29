@@ -78,6 +78,7 @@ export function ScheduleTab() {
     for (let offset = 0; offset <= 7; offset++) {
       const dayIndex = (now.dayIndex + offset) % 7;
       const dateISO = addDaysIso(now.dateISO, offset);
+      if (dateISO > pools[pk].validThrough) break; // don't roll past the season end
       if (pools[pk].closedDates.includes(dateISO)) continue;
       const dayRows = buildRows(pk, DAY_KEYS[dayIndex], dateISO, offset === 0);
       const cand = offset === 0 ? dayRows.find((r) => r.status === 'upcoming') : dayRows[0];
@@ -87,11 +88,17 @@ export function ScheduleTab() {
   };
 
   // Happening Now is always "right now" at both pools, independent of the
-  // pool/day chosen for the schedule list below.
+  // pool/day chosen below. Crucially, a pool only has live/next sessions when
+  // today is actually within its schedule's date range — otherwise the weekday
+  // pattern would falsely show programs as open during a season changeover.
   const liveByPool = POOL_KEYS.map((pk) => {
-    const closedToday = pools[pk].closedDates.includes(now.dateISO);
-    const live = closedToday ? [] : buildRows(pk, now.dayKey, now.dateISO, true).filter((r) => r.status === 'live');
-    return { poolKey: pk, label: pools[pk].label, live, nextOpen: findNextOpen(pk) };
+    const status = getScheduleStatus(pools[pk], now.dateISO);
+    const inRange = status.kind === 'ok' || status.kind === 'closed';
+    const live =
+      status.kind === 'ok'
+        ? buildRows(pk, now.dayKey, now.dateISO, true).filter((r) => r.status === 'live')
+        : [];
+    return { poolKey: pk, label: pools[pk].label, status, live, nextOpen: inRange ? findNextOpen(pk) : null };
   });
 
   const nextDayLabel = (offset: number, dayIndex: number) =>
@@ -136,7 +143,7 @@ export function ScheduleTab() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 items-start">
-          {liveByPool.map(({ poolKey, label, live, nextOpen }) => (
+          {liveByPool.map(({ poolKey, label, status, live, nextOpen }) => (
             <div key={poolKey} className="flex flex-col gap-2 min-w-0">
               <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-[#51606e]">
                 <MapPin size={13} className="shrink-0 text-[#9aa6b2]" />
@@ -145,11 +152,20 @@ export function ScheduleTab() {
 
               {live.length > 0 ? (
                 live.map((r) => <HeroCard key={r.key} row={r} href={registerLink} />)
+              ) : status.kind === 'upcoming' ? (
+                // The pool's schedule hasn't started yet — don't imply it's open.
+                <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
+                  {pools[poolKey].season} schedule starts {formatDate(status.validFrom)}.
+                </div>
+              ) : status.kind === 'expired' ? (
+                <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
+                  No current schedule — check the official catalog.
+                </div>
               ) : nextOpen && nextOpen.offset > 0 ? (
                 // Done / closed for today — show it, plus the next open session.
                 <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 flex flex-col gap-1.5">
                   <span className="self-start inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[#7a8794] bg-white border border-[#dde3e9] rounded-full px-2 py-0.5">
-                    <CalendarOff size={11} className="shrink-0" /> Closed today
+                    <CalendarOff size={11} className="shrink-0" /> {status.kind === 'closed' ? 'Closed today' : 'Closed for the day'}
                   </span>
                   <span className="text-[12px] text-[#51606e] leading-relaxed">
                     Next: <span className="font-semibold text-[#16335c]">{nextOpen.row.label}</span>{' '}
