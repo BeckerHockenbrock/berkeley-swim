@@ -89,10 +89,6 @@ export function ScheduleTab() {
 
   return (
     <section className="flex flex-col gap-5">
-      <p className="text-[13px] text-[#51606e] leading-relaxed">
-        When Berkeley&apos;s two public pools are open for lap swim, family swim, lessons and more — the City&apos;s PDF schedules pulled into one readable place.
-      </p>
-
       {/* Happening Now — both pools, side by side */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-2">

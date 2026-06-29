@@ -12,7 +12,7 @@ export function LessonsTab() {
       <div>
         <h1 className="font-display text-[30px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">Swim Lessons</h1>
         <p className="text-[14px] text-[#51606e] mt-2 leading-relaxed">
-          Find the level that matches your or your child&apos;s current ability, then register for it on the City&apos;s catalog. Every level is sold on the <strong className="font-semibold">same page</strong> — you just pick the right one when you sign up.
+          This page just explains what each level covers, so you can find the right fit. The <strong className="font-semibold">Register</strong> button takes you straight to the swim-lessons-only section of the City&apos;s catalog to sign up.
         </p>
         <div className="flex gap-5 flex-wrap text-[13px] text-[#51606e] mt-3">
           <div><span className="font-semibold text-[#1a1a1a]">Offered at:</span> both pools</div>

@@ -45,7 +45,6 @@ export default function App() {
           <div className="flex flex-col leading-none">
             <div className="flex items-center gap-2">
               <span className="font-display text-[24px] font-semibold uppercase tracking-wide leading-none">Berkeley Pools</span>
-              <span className="inline-flex items-center text-[9px] font-semibold uppercase tracking-wider text-[#a42d36] bg-[#f7e7e7] border border-[#e6c4c4] rounded px-1.5 py-0.5">Unofficial</span>
             </div>
             <span className="text-[13px] text-[#51606e] mt-1.5">{todayLabel}</span>
           </div>
