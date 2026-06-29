@@ -1,0 +1,270 @@
+{
+  "pool": "west",
+  "poolLabel": "West Campus Pool",
+  "address": "2100 Browning St",
+  "season": "Spring 2026",
+  "validFrom": "2026-04-06",
+  "validThrough": "2026-06-07",
+  "lastUpdated": "2026-02-24",
+  "timezone": "America/Los_Angeles",
+  "closedDates": [
+    "2026-05-18",
+    "2026-05-25",
+    "2026-06-06",
+    "2026-06-07"
+  ],
+  "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/west-campus-pool",
+  "schedule": {
+    "lap-swim": {
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [],
+      "sun": []
+    },
+    "aqua-zumba": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        }
+      ]
+    },
+    "senior-exercise": {
+      "mon": [
+        {
+          "start": "00:00",
+          "end": "11:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "sat": [],
+      "sun": []
+    },
+    "swim-lessons": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": []
+    },
+    "independent-exercise": {
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [],
+      "sun": []
+    },
+    "family-swim": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": []
+    },
+    "community-swim": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": []
+    },
+    "shower-program": {
+      "mon": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "tue": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "wed": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "thu": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "fri": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "sat": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "sun": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "programs": {
+    "lap-swim": {
+      "label": "Lap Swim",
+      "description": "Swim laps and practice your strokes during designated lap-swim hours.",
+      "ages": "16+",
+      "cost": "$7 resident \u00b7 $8 non-resident",
+      "verified": false
+    },
+    "independent-exercise": {
+      "label": "Independent Exercise (Dive Tank)",
+      "description": "Self-directed water exercise \u2014 water jogging or walking in the dive tank or shallow pool.",
+      "ages": "Shallow: all ages \u00b7 Dive tank: 18+",
+      "cost": "$7 resident \u00b7 $8 non-resident",
+      "verified": false
+    },
+    "family-swim": {
+      "label": "Family Swim (Shallow)",
+      "description": "Bring little ones of any age to splash around in the shallow pool.",
+      "ages": "All ages",
+      "cost": "$7 resident \u00b7 $8 non-resident",
+      "verified": false
+    },
+    "community-swim": {
+      "label": "Community Swim",
+      "description": "All ages welcome to play in the entire pool during open community hours.",
+      "ages": "All ages",
+      "cost": "$7 resident \u00b7 $8 non-resident",
+      "verified": false
+    },
+    "aquatic-masters": {
+      "label": "Berkeley Aquatic Masters",
+      "description": "Coached workouts for swimmers of all abilities. Requires a premium pass.",
+      "ages": "18+",
+      "cost": "$8 resident \u00b7 $10 non-resident (premium)",
+      "verified": false
+    },
+    "senior-exercise": {
+      "label": "Senior Exercise",
+      "description": "Fun aerobic water exercises with other seniors. Requires a premium pass.",
+      "ages": "55+",
+      "cost": "$8 resident \u00b7 $10 non-resident (premium)",
+      "verified": false
+    },
+    "barracudas": {
+      "label": "Berkeley Barracudas",
+      "description": "Afterschool swim team across four levels. A tryout is required before registration.",
+      "ages": "6\u201318 yrs",
+      "cost": "$135 resident \u00b7 $162 non-resident per 4-week session",
+      "verified": false
+    },
+    "swim-lessons": {
+      "label": "Swim Lessons",
+      "description": "Gain comfort in the water and learn the fundamentals of swimming, with classes for every level.",
+      "ages": "6 months \u2013 adult",
+      "cost": "$44 \u2013 $88 per session",
+      "verified": false
+    },
+    "aqua-zumba": {
+      "label": "Aqua Zumba",
+      "description": "Water-based Zumba fitness class. Pre-registration required.",
+      "ages": "Adults",
+      "cost": "See online catalog",
+      "verified": false
+    },
+    "shower-program": {
+      "label": "Shower Program",
+      "description": "Drop-in warm-shower access for community members.",
+      "ages": "All ages",
+      "cost": "See online catalog",
+      "verified": false
+    }
+  },
+  "lessons": {
+    "registerUrl": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/63f3e93c738d3c68d6bddf2f21aa8ca0?filter=c2VhcmNoPSZjYXRlZ29yeSU1QjIxMzYwJTVEPTEmY2F0ZWdvcnklNUIyMTM2MSU1RD0xJmNhdGVnb3J5JTVCMjEzNjIlNUQ9MSZjYXRlZ29yeSU1QjIxMzYzJTVEPTE%3D",
+    "categories": {
+      "learn-to-swim": [
+        {
+          "level": "Level 1",
+          "title": "Introduction to Water Skills",
+          "description": "Gain confidence in the pool environment \u2014 floating and kicking with support, blowing bubbles, and water-safety skills.",
+          "prereq": "No prior experience necessary.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 2",
+          "title": "Fundamental Aquatic Skills",
+          "description": "Learn independent locomotion on front and back, building a foundation for swimming strokes.",
+          "prereq": "Comfortable kicking, floating, and blowing bubbles without instructor support.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 3",
+          "title": "Stroke Development",
+          "description": "Learn side-breathing for the front crawl, develop further stroke skills, and get introduced to deep water.",
+          "prereq": "Independent locomotion; can swim 10 yards on front and back.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 4",
+          "title": "Stroke Improvement",
+          "description": "Improve proficiency and endurance over greater distances. Introduces back crawl, butterfly, and a simple open turn at the wall.",
+          "prereq": "Builds on Level 3 skills.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 5 / 6",
+          "title": "Stroke Refinement",
+          "description": "Refine all six strokes over greater distances and learn flip turns on front and back.",
+          "prereq": "Can swim 25 yds front crawl with breathing and 25 yds back crawl.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        }
+      ],
+      "preschool": [
+        {
+          "level": "Level 1",
+          "title": "Introduction to Water Skills",
+          "description": "Floating and kicking with support, blowing bubbles, and learning water-safety skills.",
+          "prereq": "No prior experience necessary.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 2",
+          "title": "Elementary Water Skills",
+          "description": "Floating, kicking, and bobbing with support, plus water-safety skills.",
+          "prereq": "Comfort in the water; can kick, float, and blow bubbles with instructor support.",
+          "cost": "King $44\u2013$88 \u00b7 West Campus $88"
+        },
+        {
+          "level": "Level 3",
+          "title": "Basic Water Skills",
+          "description": "Locomotion and treading water independently while learning water-safety skills.",
+          "prereq": "Comfortable kicking, floating, and bubble-blowing without instructor support.",
+          "cost": "King Pool only \u00b7 $44\u2013$88"
+        }
+      ]
+    }
+  },
+  "passes": [
+    {
+      "name": "Daily Ticket",
+      "description": "One visit, any drop-in program",
+      "price": {
+        "resident": "$7",
+        "nonResident": "$8"
+      },
+      "entry": "barcode",
+      "tier": "standard",
+      "featured": false,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/1714098492d96f0cbfeb1874406d4f6b?filter=c2VhcmNoPURyb3AtaW4lMjBQYXNz"
+    },
+    {
+      "name": "10-Swim Pass",
+      "description": "Ten visits, best value",
+      "price": {
+        "resident": "$58",
+        "nonResident": "$70"
+      },
+      "entry": "name",
+      "tier": "standard",
+      "featured": true,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/7ec2b23b01b628e9258b3f19e80b33d0?filter=c2VhcmNoPUFxdWF0aWMlMjBEcm9wLWlu"
+    },
+    {
+      "name": "Monthly Pass",
+      "description": "Unlimited for one month",
+      "price": {
+        "resident": "$85",
+        "nonResident": "$102"
+      },
+      "entry": "name",
+      "tier": "standard",
+      "featured": false,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/7ec2b23b01b628e9258b3f19e80b33d0?filter=c2VhcmNoPUFxdWF0aWMlMjBEcm9wLWlu"
+    },
+    {
+      "name": "Daily Ticket",
+      "description": "One visit, any drop-in program",
+      "price": {
+        "resident": "$8",
+        "nonResident": "$10"
+      },
+      "entry": "barcode",
+      "tier": "premium",
+      "featured": false,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/70e7f81b73ca9c1175358ce14622bdb2?filter=c2VhcmNoPVBSRU1JVU0%3D"
+    },
+    {
+      "name": "10-Swim Pass",
+      "description": "Ten visits, best value",
+      "price": {
+        "resident": "$75",
+        "nonResident": "$90"
+      },
+      "entry": "name",
+      "tier": "premium",
+      "featured": false,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/70e7f81b73ca9c1175358ce14622bdb2?filter=c2VhcmNoPVBSRU1JVU0%3D"
+    },
+    {
+      "name": "Monthly Pass",
+      "description": "Unlimited for one month",
+      "price": {
+        "resident": "$94",
+        "nonResident": "$113"
+      },
+      "entry": "name",
+      "tier": "premium",
+      "featured": false,
+      "verified": true,
+      "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/70e7f81b73ca9c1175358ce14622bdb2?filter=c2VhcmNoPVBSRU1JVU0%3D"
+    }
+  ]
+}

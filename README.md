@@ -1,32 +1,47 @@
-# Berkeley Swim
+# Berkeley Pools
 
-An unofficial schedule and information viewer for City of Berkeley Aquatics (King Pool & West Campus Pool).
+An unofficial, mobile-first schedule viewer for City of Berkeley Aquatics — King Pool and West Campus Pool. The City publishes its schedules as PDFs that are hard to read on a phone; this pulls both pools into one place that's easy to check before you head over.
 
-## Data Schema
+Not affiliated with, endorsed by, or operated by the City of Berkeley.
 
-The application logic is driven by a strict data contract defined in `src/data/types.ts`. All schedule data lives in `src/data/schedule.json`.
+## How the data works
 
-The data structure includes:
-- **Meta**: Season name, valid dates, and closed dates.
-- **Programs**: Descriptions, ages, and costs for different swim programs.
-- **Pools**: The actual week schedules mapped by program and day.
-- **Lessons & Passes**: Information on swim lessons and available passes.
+The schedule is generated from the City's official PDFs — nothing is hand-typed.
 
-The application uses a typed loader (`src/data/loadSchedule.ts`) to validate the `schedule.json` file against the TypeScript interfaces at compile time.
+```
+pdfs/*.pdf  ──▶  scripts/parse_schedules.py  ──▶  src/data/schedules/<pool>-<season>.json  ──▶  app
+                     (run by GitHub Actions)                                       (picks active by date)
+```
 
-## Update Workflow
+1. **Drop a PDF** into `pdfs/` (one per pool per season — filename doesn't matter; the pool, season, date range and "last revised" date are read from inside).
+2. **Push it.** The [`update-schedules`](.github/workflows/update-schedules.yml) GitHub Action runs the parser, commits the regenerated JSON, and Vercel redeploys.
+3. The app loads every schedule and shows, **per pool**, the one whose date range covers today (Berkeley time) — so King and West can be on different seasons during a changeover.
 
-To update the schedule data:
-1. Modify `src/data/schedule.json` with the latest changes from the official City of Berkeley sources.
-2. Ensure the JSON still matches the TypeScript schema in `src/data/types.ts`.
-3. Run `npm run lint` and `npm run build` to verify the types.
+The parser ([`scripts/parse_schedules.py`](scripts/parse_schedules.py)) reads each PDF's program × day grid by locating the row-separator rules and day-column positions, then assigns each time token to a cell by coordinate. It also extracts the date range, the `**` limited-lane markers, and closure dates from the page text. Output conforms to the `PoolSeason` contract in [`src/data/types.ts`](src/data/types.ts).
 
-### Future Improvements
-In the future, a PDF parser could be implemented to automatically extract the schedule from the official PDFs and emit the same JSON structure, dropping the need for manual edits.
+> Validated against the previously hand-typed schedule: the parser reproduced it exactly except for three cells where the hand-typed data was wrong and the parser was right.
+
+### Static content
+
+Program descriptions, ages, costs, swim lessons, and passes aren't in the schedule PDFs, so they're hand-maintained in [`src/data/catalog.json`](src/data/catalog.json).
+
+## Run the parser locally
+
+```bash
+pip install -r scripts/requirements.txt
+python scripts/parse_schedules.py
+```
 
 ## Development
 
-- `npm install`
-- `npm run dev` to start the local development server.
-- `npm run build` to build for production.
-- `npm run test` to run the unit tests via Vitest.
+```bash
+npm install
+npm run dev      # local dev server
+npm run lint     # tsc --noEmit
+npm run test     # vitest
+npm run build    # production build (also generates the PWA service worker)
+```
+
+## Stack
+
+Vite + React + TypeScript + Tailwind, deployed on Vercel. Installable as a PWA. Schedule pipeline in Python (pdfplumber) via GitHub Actions.

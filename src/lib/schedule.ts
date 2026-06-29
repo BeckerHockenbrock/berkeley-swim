@@ -2,9 +2,9 @@ import {
   DAY_KEYS,
   type DayKey,
   type IsoDate,
-  type Meta,
   type PoolSchedule,
   type ProgramMap,
+  type ScheduleWindow,
   type Time24,
   type TimeSlot,
 } from '../data/types';
@@ -139,15 +139,15 @@ export type ScheduleStatus =
  * Decide whether the loaded schedule is safe to trust for `dateISO`:
  * closed today, expired (past `validThrough`), not yet started, or ok.
  */
-export function getScheduleStatus(meta: Meta, dateISO: IsoDate): ScheduleStatus {
-  if (meta.closedDates.includes(dateISO)) {
+export function getScheduleStatus(win: ScheduleWindow, dateISO: IsoDate): ScheduleStatus {
+  if (win.closedDates.includes(dateISO)) {
     return { kind: 'closed', date: dateISO };
   }
-  if (dateISO > meta.validThrough) {
-    return { kind: 'expired', validThrough: meta.validThrough };
+  if (dateISO > win.validThrough) {
+    return { kind: 'expired', validThrough: win.validThrough };
   }
-  if (dateISO < meta.validFrom) {
-    return { kind: 'upcoming', validFrom: meta.validFrom };
+  if (dateISO < win.validFrom) {
+    return { kind: 'upcoming', validFrom: win.validFrom };
   }
   return { kind: 'ok' };
 }

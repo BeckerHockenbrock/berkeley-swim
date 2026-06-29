@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { ChevronDown, ExternalLink, Tag, MapPin, CalendarOff } from 'lucide-react';
-import { meta, passes, pools, programs } from '../data/loadSchedule';
+import { passes, pools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
   addDaysIso,
@@ -75,7 +75,7 @@ export function ScheduleTab() {
     for (let offset = 0; offset <= 7; offset++) {
       const dayIndex = (now.dayIndex + offset) % 7;
       const dateISO = addDaysIso(now.dateISO, offset);
-      if (meta.closedDates.includes(dateISO)) continue;
+      if (pools[pk].closedDates.includes(dateISO)) continue;
       const dayRows = buildRows(pk, DAY_KEYS[dayIndex], offset === 0);
       const cand = offset === 0 ? dayRows.find((r) => r.status === 'upcoming') : dayRows[0];
       if (cand) return { row: cand, offset, dayIndex };
@@ -86,7 +86,7 @@ export function ScheduleTab() {
   // Happening Now is always "right now" at both pools, independent of the
   // pool/day chosen for the schedule list below.
   const liveByPool = POOL_KEYS.map((pk) => {
-    const closedToday = meta.closedDates.includes(now.dateISO);
+    const closedToday = pools[pk].closedDates.includes(now.dateISO);
     const live = closedToday ? [] : buildRows(pk, now.dayKey, true).filter((r) => r.status === 'live');
     return { poolKey: pk, label: pools[pk].label, live, nextOpen: findNextOpen(pk) };
   });
@@ -249,9 +249,9 @@ export function ScheduleTab() {
         </div>
 
         <p className="text-[12px] text-[#7a8794] leading-relaxed mt-1">
-          Community-maintained · times last checked {formatDate(meta.lastUpdated)}, {meta.lastUpdated.slice(0, 4)}.{' '}
+          {pools[pool].season} · times last checked {formatDate(pools[pool].lastUpdated)}, {pools[pool].lastUpdated.slice(0, 4)}.{' '}
           <a
-            href={meta.sources[pool]}
+            href={pools[pool].source}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#2a5caa] no-underline hover:underline"

@@ -5,7 +5,7 @@ import { ScheduleTab } from './components/ScheduleTab';
 import { LessonsTab } from './components/LessonsTab';
 import { PassesTab } from './components/PassesTab';
 import { getBerkeleyNow, getScheduleStatus, formatDate } from './lib/schedule';
-import { meta } from './data/loadSchedule';
+import { pools } from './data/loadSchedule';
 
 const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
 const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
@@ -29,8 +29,20 @@ export default function App() {
   const [tab, setTab] = useState<TabKey>('schedule');
 
   const now = getBerkeleyNow();
-  const status = getScheduleStatus(meta, now.dateISO);
   const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
+
+  // Each pool can be on its own season, so judge data freshness per pool.
+  const poolStatuses = [pools.king, pools.west].map((p) => getScheduleStatus(p, now.dateISO));
+  const bothClosed = poolStatuses.every((s) => s.kind === 'closed');
+  const expired = poolStatuses.find((s) => s.kind === 'expired');
+  const upcoming = poolStatuses.find((s) => s.kind === 'upcoming');
+  const notice = bothClosed
+    ? { tone: 'closed' as const, text: `Both pools are closed today, ${formatDate(now.dateISO)}.` }
+    : expired
+      ? { tone: 'warn' as const, text: `Showing the most recent schedule we have — confirm today's times on the official catalog.` }
+      : upcoming && upcoming.kind === 'upcoming'
+        ? { tone: 'warn' as const, text: `This season's schedule doesn't take effect until ${formatDate(upcoming.validFrom)}.` }
+        : null;
 
   return (
     <div className="min-h-screen bg-[#eef1f5] text-[#1a1a1a] font-sans flex flex-col">
@@ -60,20 +72,16 @@ export default function App() {
       {/* Main content */}
       <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-28">
         {/* Staleness / closure notices */}
-        {status.kind !== 'ok' && (
+        {notice && (
           <div
             className={`rounded-xl px-4 py-3 mb-4 flex gap-2.5 items-start ${
-              status.kind === 'closed'
+              notice.tone === 'closed'
                 ? 'bg-[#fbeceb] text-[#7c2229] border border-[#f0cfce]'
                 : 'bg-[#fff6e0] text-[#6b5410] border border-[#ecd9a0]'
             }`}
           >
             <AlertTriangle size={17} className="shrink-0 mt-0.5" />
-            <p className="text-[13px] font-medium leading-snug">
-              {status.kind === 'closed' && `Both pools are closed today, ${formatDate(status.date)}.`}
-              {status.kind === 'expired' && `This schedule expired on ${formatDate(status.validThrough)}. Times may be out of date — confirm on the official City catalog.`}
-              {status.kind === 'upcoming' && `This schedule does not take effect until ${formatDate(status.validFrom)}.`}
-            </p>
+            <p className="text-[13px] font-medium leading-snug">{notice.text}</p>
           </div>
         )}
 

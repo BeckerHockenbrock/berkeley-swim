@@ -123,3 +123,45 @@ export interface ScheduleData {
   lessons: Lessons;
   passes: Pass[];
 }
+
+/** Static, hand-maintained content (not in the schedule PDFs). `catalog.json`. */
+export interface Catalog {
+  programs: ProgramMap;
+  lessons: Lessons;
+  passes: Pass[];
+}
+
+/**
+ * One pool's schedule for one season — exactly what the PDF parser emits into
+ * `src/data/schedules/<pool>-<season>.json`. This is the contract the parser
+ * must satisfy.
+ */
+export interface PoolSeason {
+  pool: PoolKey;
+  poolLabel: string;
+  address: string;
+  season: string;
+  validFrom: IsoDate;
+  validThrough: IsoDate;
+  lastUpdated: IsoDate;
+  timezone: string;
+  closedDates: IsoDate[];
+  source: string;
+  schedule: PoolSchedule;
+}
+
+/** A pool's schedule resolved for today, shaped for the UI. */
+export interface ResolvedPool {
+  label: string;
+  address: string;
+  season: string;
+  validFrom: IsoDate;
+  validThrough: IsoDate;
+  lastUpdated: IsoDate;
+  closedDates: IsoDate[];
+  source: string;
+  schedule: PoolSchedule;
+}
+
+/** Minimal shape needed to judge whether a schedule covers a given date. */
+export type ScheduleWindow = Pick<PoolSeason, 'validFrom' | 'validThrough' | 'closedDates'>;

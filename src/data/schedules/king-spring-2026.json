@@ -1,0 +1,285 @@
+{
+  "pool": "king",
+  "poolLabel": "King Pool",
+  "address": "1700 Hopkins St",
+  "season": "Spring 2026",
+  "validFrom": "2026-03-02",
+  "validThrough": "2026-06-07",
+  "lastUpdated": "2026-02-24",
+  "timezone": "America/Los_Angeles",
+  "closedDates": [
+    "2026-03-30",
+    "2026-05-18",
+    "2026-05-25",
+    "2026-06-06",
+    "2026-06-07"
+  ],
+  "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/king-pool",
+  "schedule": {
+    "lap-swim": {
+      "mon": [
+        {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
+          "start": "18:30",
+          "end": "20:00",
+          "limited": true
+        }
+      ],
+      "wed": [
+        {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
+          "start": "18:30",
+          "end": "20:00",
+          "limited": true
+        }
+      ],
+      "fri": [
+        {
+          "start": "07:30",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "08:00",
+          "end": "12:00"
+        }
+      ],
+      "sun": [
+        {
+          "start": "11:00",
+          "end": "12:00",
+          "limited": true
+        },
+        {
+          "start": "12:00",
+          "end": "13:30"
+        }
+      ]
+    },
+    "aquatic-masters": {
+      "mon": [
+        {
+          "start": "06:00",
+          "end": "07:30"
+        }
+      ],
+      "tue": [
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "06:00",
+          "end": "07:30"
+        }
+      ],
+      "thu": [
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "06:00",
+          "end": "07:30"
+        }
+      ],
+      "sat": [],
+      "sun": [
+        {
+          "start": "09:30",
+          "end": "11:00"
+        }
+      ]
+    },
+    "independent-exercise": {
+      "mon": [
+        {
+          "start": "06:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "08:00",
+          "end": "12:00"
+        }
+      ],
+      "sun": [
+        {
+          "start": "09:30",
+          "end": "13:30"
+        }
+      ]
+    },
+    "barracudas": {
+      "mon": [
+        {
+          "start": "16:00",
+          "end": "18:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "16:00",
+          "end": "18:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "16:00",
+          "end": "18:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "16:00",
+          "end": "18:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "16:00",
+          "end": "18:00"
+        }
+      ],
+      "sat": [],
+      "sun": []
+    },
+    "swim-lessons": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": [
+        {
+          "start": "10:00",
+          "end": "12:00"
+        }
+      ]
+    },
+    "family-swim": {
+      "mon": [
+        {
+          "start": "08:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "08:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:30",
+          "end": "20:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "08:00",
+          "end": "12:30"
+        },
+        {
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "08:00",
+          "end": "12:00"
+        }
+      ],
+      "sun": []
+    }
+  }
+}
