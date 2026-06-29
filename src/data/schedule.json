@@ -960,6 +960,7 @@
         "resident": "$7",
         "nonResident": "$8"
       },
+      "entry": "barcode",
       "featured": false,
       "verified": false,
       "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/1714098492d96f0cbfeb1874406d4f6b?filter=c2VhcmNoPURyb3AtaW4lMjBQYXNz"
@@ -968,6 +969,7 @@
       "name": "10-Swim Pass",
       "description": "Ten visits, best value",
       "price": null,
+      "entry": "name",
       "featured": true,
       "verified": false,
       "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/7ec2b23b01b628e9258b3f19e80b33d0?filter=c2VhcmNoPUFxdWF0aWMlMjBEcm9wLWlu"
@@ -976,6 +978,7 @@
       "name": "Monthly Pass",
       "description": "Unlimited for one month",
       "price": null,
+      "entry": "name",
       "featured": false,
       "verified": false,
       "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/7ec2b23b01b628e9258b3f19e80b33d0?filter=c2VhcmNoPUFxdWF0aWMlMjBEcm9wLWlu"
@@ -987,6 +990,7 @@
         "resident": "$8",
         "nonResident": "$10"
       },
+      "entry": "barcode",
       "featured": false,
       "verified": false,
       "link": "https://rec.berkeleyca.gov/CA/berkeley-ca/catalog/index/70e7f81b73ca9c1175358ce14622bdb2?filter=c2VhcmNoPVBSRU1JVU0%3D"

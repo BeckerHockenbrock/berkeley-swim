@@ -1,5 +1,10 @@
 import { passes } from '../data/loadSchedule';
-import { ExternalLink, MapPin, Globe } from 'lucide-react';
+import { ExternalLink, MapPin, Globe, Barcode, UserCheck } from 'lucide-react';
+
+const ENTRY = {
+  name: { Icon: UserCheck, label: 'Give your name' },
+  barcode: { Icon: Barcode, label: 'Scan emailed barcode' },
+} as const;
 
 export function PassesTab() {
   return (
@@ -13,6 +18,7 @@ export function PassesTab() {
         {passes.map((p, i) => {
           const priceDisplay = p.price === null ? 'TBD' : `${p.price.resident} / ${p.price.nonResident}`;
           const subDisplay = p.price === null ? 'price to confirm' : 'resident / non-resident';
+          const entry = ENTRY[p.entry];
 
           return (
             <div
@@ -26,7 +32,7 @@ export function PassesTab() {
               {p.featured && (
                 <div className="absolute -top-2.5 left-5 bg-[#d5ad1a] text-[#3d3008] font-semibold uppercase tracking-wider text-[10px] px-2.5 py-0.5 rounded">Most popular</div>
               )}
-              <div className="flex justify-between items-start mb-5 gap-3">
+              <div className="flex justify-between items-start mb-3 gap-3">
                 <div className="flex-1">
                   <div className="text-[16px] font-bold text-[#16335c] leading-tight">{p.name}</div>
                   <div className="text-[13px] text-[#51606e] mt-1.5 leading-relaxed">{p.description}</div>
@@ -36,6 +42,14 @@ export function PassesTab() {
                   <div className="text-[11px] text-[#7a8794] mt-0.5">{subDisplay}</div>
                 </div>
               </div>
+
+              {/* How you get in with this pass */}
+              <div className="flex items-center gap-1.5 mb-3 text-[12px] font-medium text-[#1f4b7a] bg-white border border-[#dbe6f2] rounded-lg px-2.5 py-1.5">
+                <entry.Icon size={14} className="shrink-0 text-[#2a5caa]" />
+                <span className="text-[#7a8794]">Entry:</span>
+                <span>{entry.label}</span>
+              </div>
+
               <a
                 href={p.link}
                 target="_blank"
@@ -54,6 +68,22 @@ export function PassesTab() {
         })}
       </div>
 
+      {/* Getting in */}
+      <div className="rounded-2xl border border-[#dde3e9] bg-white p-5">
+        <div className="text-[12px] font-semibold uppercase tracking-wider text-[#51606e] mb-3">Getting in at the pool</div>
+        <div className="flex flex-col gap-3 text-[14px] text-[#3a4651]">
+          <div className="flex items-start gap-2.5">
+            <UserCheck size={16} className="mt-0.5 shrink-0 text-[#2a5caa]" />
+            <span><span className="font-semibold text-[#1a1a1a]">10-Swim &amp; Monthly passes:</span> just give the guard your name at the entrance — these are tied to your account, nothing to scan.</span>
+          </div>
+          <div className="flex items-start gap-2.5">
+            <Barcode size={16} className="mt-0.5 shrink-0 text-[#2a5caa]" />
+            <span><span className="font-semibold text-[#1a1a1a]">Daily ticket &amp; Premium pass:</span> scan the barcode emailed to you after you buy — have it ready on your phone.</span>
+          </div>
+        </div>
+      </div>
+
+      {/* How to pay */}
       <div className="rounded-2xl border border-[#dde3e9] bg-white p-5">
         <div className="text-[12px] font-semibold uppercase tracking-wider text-[#51606e] mb-3">How to pay</div>
         <div className="flex flex-col gap-2.5 text-[14px] text-[#3a4651]">

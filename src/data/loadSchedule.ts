@@ -7,11 +7,13 @@ import scheduleJson from './schedule.json';
  * Today this is a hand-maintained JSON file. In the future a PDF parser will
  * emit the same shape (see README) and this loader stays unchanged.
  *
- * The `ScheduleData` annotation makes the build fail if `schedule.json` ever
- * drifts from the contract, and gives consumers the index-friendly map types
- * (e.g. `programs[slug]`) rather than the narrow literal JSON type.
+ * The `ScheduleData` assertion makes the build fail if `schedule.json` ever
+ * drifts from the contract (missing or wrong-typed fields), and gives consumers
+ * the index-friendly map types (e.g. `programs[slug]`). We assert rather than
+ * annotate because TypeScript widens JSON string literals (e.g. a pass's
+ * `entry` value) to `string`, which a plain annotation would reject.
  */
-export const schedule: ScheduleData = scheduleJson;
+export const schedule = scheduleJson as ScheduleData;
 
 export const meta = schedule.meta;
 export const programs = schedule.programs;
