@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown, ExternalLink, Tag, MapPin } from 'lucide-react';
+import { ChevronDown, ExternalLink, Tag, MapPin, CalendarOff } from 'lucide-react';
 import { meta, passes, pools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
+  addDaysIso,
   formatDate,
   formatRange,
+  formatTime,
   getBerkeleyNow,
   getSlotStatus,
   minutesOf,
@@ -66,13 +68,31 @@ export function ScheduleTab() {
     };
   }, [now.minutes]);
 
+  // The next opening for a pool: an upcoming slot later today, or — if the pool
+  // is done/closed for the day — the first session on the next open day. Skips
+  // fully-closed dates (holidays) entirely.
+  const findNextOpen = (pk: PoolKey) => {
+    for (let offset = 0; offset <= 7; offset++) {
+      const dayIndex = (now.dayIndex + offset) % 7;
+      const dateISO = addDaysIso(now.dateISO, offset);
+      if (meta.closedDates.includes(dateISO)) continue;
+      const dayRows = buildRows(pk, DAY_KEYS[dayIndex], offset === 0);
+      const cand = offset === 0 ? dayRows.find((r) => r.status === 'upcoming') : dayRows[0];
+      if (cand) return { row: cand, offset, dayIndex };
+    }
+    return null;
+  };
+
   // Happening Now is always "right now" at both pools, independent of the
   // pool/day chosen for the schedule list below.
-  const liveByPool = POOL_KEYS.map((pk) => ({
-    poolKey: pk,
-    label: pools[pk].label,
-    rows: buildRows(pk, now.dayKey, true).filter((r) => r.status === 'live'),
-  }));
+  const liveByPool = POOL_KEYS.map((pk) => {
+    const closedToday = meta.closedDates.includes(now.dateISO);
+    const live = closedToday ? [] : buildRows(pk, now.dayKey, true).filter((r) => r.status === 'live');
+    return { poolKey: pk, label: pools[pk].label, live, nextOpen: findNextOpen(pk) };
+  });
+
+  const nextDayLabel = (offset: number, dayIndex: number) =>
+    offset === 0 ? 'today' : offset === 1 ? 'tomorrow' : DAY_FULL[dayIndex];
 
   // Schedule list: the selected pool + selected day.
   const dayKey = DAY_KEYS[day];
@@ -102,17 +122,37 @@ export function ScheduleTab() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 items-start">
-          {liveByPool.map(({ poolKey, label, rows: liveRows }) => (
+          {liveByPool.map(({ poolKey, label, live, nextOpen }) => (
             <div key={poolKey} className="flex flex-col gap-2 min-w-0">
               <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wider text-[#51606e]">
                 <MapPin size={13} className="shrink-0 text-[#9aa6b2]" />
                 <span className="truncate">{label}</span>
               </div>
-              {liveRows.length > 0 ? (
-                liveRows.map((r) => <HeroCard key={r.key} row={r} href={registerLink} />)
+
+              {live.length > 0 ? (
+                live.map((r) => <HeroCard key={r.key} row={r} href={registerLink} />)
+              ) : nextOpen && nextOpen.offset > 0 ? (
+                // Done / closed for today — show it, plus the next open session.
+                <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 flex flex-col gap-1.5">
+                  <span className="self-start inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[#7a8794] bg-white border border-[#dde3e9] rounded-full px-2 py-0.5">
+                    <CalendarOff size={11} className="shrink-0" /> Closed today
+                  </span>
+                  <span className="text-[12px] text-[#51606e] leading-relaxed">
+                    Next: <span className="font-semibold text-[#16335c]">{nextOpen.row.label}</span>{' '}
+                    {nextDayLabel(nextOpen.offset, nextOpen.dayIndex)}
+                    <span className="text-[#7a8794]"> · {formatTime(nextOpen.row.slot.start)}</span>
+                  </span>
+                </div>
+              ) : nextOpen ? (
+                // Between sessions, but open again later today.
+                <div className="rounded-2xl border border-[#dde3e9] bg-white px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
+                  <span className="font-semibold text-[#51606e]">Next:</span>{' '}
+                  <span className="text-[#16335c] font-semibold">{nextOpen.row.label}</span>
+                  <span className="text-[#7a8794]"> · {formatTime(nextOpen.row.slot.start)}</span>
+                </div>
               ) : (
-                <div className="rounded-2xl border border-[#dde3e9] bg-white px-3 py-3 text-[12px] text-[#51606e]">
-                  Nothing open now.
+                <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e]">
+                  No upcoming sessions this week.
                 </div>
               )}
             </div>

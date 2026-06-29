@@ -93,6 +93,13 @@ export default function App() {
             <a href={OFFICIAL_AQUATICS} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City of Berkeley Aquatics ↗</a>
           </div>
 
+          <div>
+            <div className="text-[12px] font-semibold uppercase tracking-wider text-[#51606e] mb-1.5">About</div>
+            <p className="text-[13px] text-[#51606e] leading-relaxed max-w-[560px]">
+              Built by a City of Berkeley lifeguard who got tired of digging through PDF schedules to find an open lane. It pulls King &amp; West Campus hours into one place that&apos;s easy to read on your phone. Unofficial, and made to be genuinely useful — if something looks off, let me know.
+            </p>
+          </div>
+
           <a
             href={FEEDBACK_MAILTO}
             className="focus-ring self-start inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#c2cad3] text-[13px] font-semibold text-[#1f4b7a] no-underline hover:border-[#2a5caa] hover:bg-[#f4f7fb] transition-colors"

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   DAY_KEYS,
+  addDaysIso,
   formatRange,
   formatTime,
   getBerkeleyNow,
@@ -119,6 +120,18 @@ describe('getScheduleStatus', () => {
       kind: 'upcoming',
       validFrom: '2026-06-08',
     });
+  });
+});
+
+describe('addDaysIso', () => {
+  it('adds a day', () => {
+    expect(addDaysIso('2026-06-29', 1)).toBe('2026-06-30');
+  });
+  it('rolls over a month boundary', () => {
+    expect(addDaysIso('2026-06-30', 1)).toBe('2026-07-01');
+  });
+  it('rolls over a year boundary', () => {
+    expect(addDaysIso('2026-12-31', 1)).toBe('2027-01-01');
   });
 });
 

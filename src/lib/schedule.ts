@@ -195,3 +195,17 @@ export function formatDate(dateISO: IsoDate): string {
   const [, month, day] = dateISO.split('-');
   return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
 }
+
+/**
+ * Add `days` calendar days to an ISO date. Pure UTC arithmetic so it never
+ * drifts across daylight-saving boundaries. `"2026-12-31" + 1 → "2027-01-01"`.
+ */
+export function addDaysIso(dateISO: IsoDate, days: number): IsoDate {
+  const [y, m, d] = dateISO.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  const yy = dt.getUTCFullYear();
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
