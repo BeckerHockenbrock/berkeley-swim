@@ -96,7 +96,7 @@ export default function App() {
           <div>
             <div className="text-[12px] font-semibold uppercase tracking-wider text-[#51606e] mb-1.5">About</div>
             <p className="text-[13px] text-[#51606e] leading-relaxed max-w-[560px]">
-              Built by a City of Berkeley lifeguard who got tired of digging through PDF schedules to find an open lane. It pulls King &amp; West Campus hours into one place that&apos;s easy to read on your phone. Unofficial, and made to be genuinely useful — if something looks off, let me know.
+              I&apos;m a lifeguard at King and West Campus, and people kept asking me the same thing on deck — when&apos;s the pool open? when&apos;s lap swim? The City only posts the schedules as PDFs that are rough to read on a phone, so I built this to put both pools&apos; hours in one place you can check before you head over. It&apos;s unofficial. If you catch something wrong, tell me and I&apos;ll fix it.
             </p>
           </div>
 
