@@ -41,9 +41,7 @@ export default function App() {
       {/* App header */}
       <header className="sticky top-0 z-20 w-full bg-white/95 backdrop-blur border-b border-[#dde3e9]">
         <div className="max-w-[680px] mx-auto px-4 py-3 flex items-center gap-3">
-          <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white flex items-center justify-center shadow-sm">
-            <Waves size={22} strokeWidth={2.25} />
-          </div>
+          <img src="/logo.png" alt="Berkeley Pools logo" className="h-11 w-11 shrink-0 object-contain" />
           <div className="flex flex-col leading-none">
             <div className="flex items-center gap-2">
               <span className="font-display text-[24px] font-semibold uppercase tracking-wide leading-none">Berkeley Pools</span>
