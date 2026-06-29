@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { AlertTriangle, Waves, CalendarDays, Ticket, MapPin, Phone } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
+import { AlertTriangle, Waves, CalendarDays, Ticket, MapPin, Phone, MessageSquarePlus } from 'lucide-react';
 import { ScheduleTab } from './components/ScheduleTab';
 import { LessonsTab } from './components/LessonsTab';
 import { PassesTab } from './components/PassesTab';
@@ -8,6 +9,11 @@ import { meta } from './data/loadSchedule';
 
 const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
 const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
+const FEEDBACK_MAILTO =
+  'mailto:bhocken91@gmail.com?subject=' +
+  encodeURIComponent('Berkeley Pools — bug / feature') +
+  '&body=' +
+  encodeURIComponent("What's wrong, or what would you like to see?\n\n");
 
 const FULL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -86,6 +92,15 @@ export default function App() {
             <a href={OFFICIAL_CATALOG} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City registration catalog ↗</a>
             <a href={OFFICIAL_AQUATICS} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City of Berkeley Aquatics ↗</a>
           </div>
+
+          <a
+            href={FEEDBACK_MAILTO}
+            className="focus-ring self-start inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#c2cad3] text-[13px] font-semibold text-[#1f4b7a] no-underline hover:border-[#2a5caa] hover:bg-[#f4f7fb] transition-colors"
+          >
+            <MessageSquarePlus size={15} className="shrink-0" />
+            Report a bug or request a feature
+          </a>
+
           <p className="text-[12px] text-[#7a8794] leading-relaxed">
             <strong className="font-semibold text-[#51606e]">Unofficial site.</strong> Not affiliated with, endorsed by, or operated by the City of Berkeley. Always verify times and fees on the official catalog. © {new Date().getFullYear()}
           </p>
@@ -114,6 +129,8 @@ export default function App() {
           })}
         </div>
       </nav>
+
+      <Analytics />
     </div>
   );
 }

@@ -87,7 +87,7 @@ export function LessonsTab() {
 
       <div className="rounded-xl border border-[#ecd9a0] bg-[#fff6e0] px-4 py-3 text-[13px] text-[#6b5410] leading-relaxed flex gap-2.5 items-start">
         <Waves size={16} className="shrink-0 mt-0.5" />
-        <span>Summer registration opens April 9 (residents) and April 16 (non-residents). King Pool $44–$88 reflects resident/scholarship tiers; West Campus is a flat $88.</span>
+        <span>Residents get priority registration before non-residents each season. King Pool $44–$88 reflects resident/scholarship tiers; West Campus is a flat $88.</span>
       </div>
     </section>
   );
