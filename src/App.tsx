@@ -99,13 +99,6 @@ export default function App() {
             <a href={OFFICIAL_AQUATICS} target="_blank" rel="noopener noreferrer" className="text-[#2a5caa] no-underline hover:underline">City of Berkeley Aquatics ↗</a>
           </div>
 
-          <div>
-            <div className="text-[12px] font-semibold uppercase tracking-wider text-[#51606e] mb-1.5">About</div>
-            <p className="text-[13px] text-[#51606e] leading-relaxed max-w-[560px]">
-              I&apos;m a lifeguard at King and West Campus, and people kept asking me the same thing on deck — when&apos;s the pool open? when&apos;s lap swim? The City only posts the schedules as PDFs that are rough to read on a phone, so I built this to put both pools&apos; hours in one place you can check before you head over. It&apos;s unofficial. If you catch something wrong, tell me and I&apos;ll fix it.
-            </p>
-          </div>
-
           <a
             href={FEEDBACK_MAILTO}
             className="focus-ring self-start inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border border-[#c2cad3] text-[13px] font-semibold text-[#1f4b7a] no-underline hover:border-[#2a5caa] hover:bg-[#f4f7fb] transition-colors"
