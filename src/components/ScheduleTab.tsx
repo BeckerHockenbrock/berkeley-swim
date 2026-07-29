@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ChevronDown, Tag, MapPin, CalendarOff, ArrowRight } from 'lucide-react';
 import { pools, programs } from '../data/loadSchedule';
 import {
@@ -39,13 +39,21 @@ const STATUS_PILL: Record<SlotStatus, { text: string; cls: string } | null> = {
   scheduled: null,
 };
 
-export function ScheduleTab() {
-  const now = getBerkeleyNow();
+interface ScheduleTabProps {
+  overrideDate?: Date | null;
+}
+
+export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
+  const now = getBerkeleyNow(overrideDate ?? undefined);
   const [activeTab, setActiveTab] = useState<ViewTab>('happening');
   const [pool, setPool] = useState<PoolKey>('king');
   const [day, setDay] = useState<number>(now.dayIndex);
   const [activity, setActivity] = useState<string>('all');
   const [openKey, setOpenKey] = useState<string | null>(null);
+
+  useEffect(() => {
+    setDay(now.dayIndex);
+  }, [now.dayIndex]);
 
   const buildRows = useMemo(() => {
     return (poolKey: PoolKey, dKey: DayKey, dateISO: string, isToday: boolean): Row[] => {

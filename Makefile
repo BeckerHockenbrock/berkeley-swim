@@ -4,7 +4,10 @@ install:
 	npm install
 
 dev:
-	npm run dev
+	VITE_DEV_MODE=true npm run dev
+
+web:
+	npm run dev:web
 
 build:
 	npm run build

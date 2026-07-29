@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { AlertTriangle, MapPin, Phone, MessageSquarePlus } from 'lucide-react';
 import { ScheduleTab } from './components/ScheduleTab';
+import { DevBar } from './components/DevBar';
 import { getBerkeleyNow, getScheduleStatus, formatDate } from './lib/schedule';
 import { pools } from './data/loadSchedule';
 
@@ -14,22 +16,13 @@ const FEEDBACK_MAILTO =
 
 const FULL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-/**
- * This app is a schedule viewer and nothing else.
- *
- * It used to carry Lessons and Passes tabs (and so a bottom tab bar). Those were
- * removed on purpose — the site is unofficial and shouldn't look like a place
- * you can register. The code is kept in `archive/signup-ui/`; read that README
- * before adding a signup surface back.
- */
+const IS_DEV_MODE = import.meta.env.VITE_DEV_MODE === 'true';
+
 export default function App() {
-  const now = getBerkeleyNow();
+  const [overrideDate, setOverrideDate] = useState<Date | null>(null);
+  const now = getBerkeleyNow(overrideDate ?? undefined);
   const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
 
-  // Only a genuine all-pools event belongs in the global banner. Per-pool data
-  // freshness (expired / upcoming) is shown inside the Schedule tab against the
-  // pool the user actually selected — a global banner there would mislead during
-  // a staggered changeover (one pool active, the other not yet started).
   const bothClosed = [pools.king, pools.west].every(
     (p) => getScheduleStatus(p, now.dateISO).kind === 'closed',
   );
@@ -39,6 +32,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#eef1f5] text-[#1a1a1a] font-sans flex flex-col">
+      {/* Dev Mode Bar */}
+      {IS_DEV_MODE && (
+        <DevBar overrideDate={overrideDate} onOverrideChange={setOverrideDate} />
+      )}
+
       {/* Slim, always-present unofficial disclaimer */}
       <div className="w-full bg-[#16335c] text-[#cdd8e8]">
         <div className="max-w-[680px] mx-auto px-4 py-1.5 flex items-center justify-center gap-1.5 text-center">
@@ -78,7 +76,7 @@ export default function App() {
           </div>
         )}
 
-        <ScheduleTab />
+        <ScheduleTab overrideDate={overrideDate} />
 
         {/* Footer */}
         <footer className="mt-10 pt-6 border-t border-[#dadfe6] flex flex-col gap-3 text-[13px] text-[#51606e]">
