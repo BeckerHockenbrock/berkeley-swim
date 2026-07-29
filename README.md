@@ -4,6 +4,17 @@ An unofficial, mobile-first schedule viewer for City of Berkeley Aquatics — Ki
 
 Not affiliated with, endorsed by, or operated by the City of Berkeley.
 
+## Scope: schedules only
+
+This is **only** a schedule viewer. It does not host lesson signups, pass
+purchases, or "Register" buttons — those were removed on 2026-07-29 so the site
+can't be mistaken for an official City registration channel. The old components
+and data are preserved, unwired, in [`archive/signup-ui/`](archive/signup-ui/);
+read that README before adding a signup surface back.
+
+The footer links out to the City's own registration catalog. That's a pointer to
+the official source, not a signup flow, and it stays.
+
 ## How the data works
 
 The schedule is generated from the City's official PDFs — nothing is hand-typed.
@@ -23,7 +34,7 @@ The parser ([`scripts/parse_schedules.py`](scripts/parse_schedules.py)) reads ea
 
 ### Static content
 
-Program descriptions, ages, costs, swim lessons, and passes aren't in the schedule PDFs, so they're hand-maintained in [`src/data/catalog.json`](src/data/catalog.json).
+Program descriptions, ages, and drop-in costs aren't in the schedule PDFs, so they're hand-maintained in [`src/data/catalog.json`](src/data/catalog.json). (Lesson and pass data used to live there too — it now sits in `archive/signup-ui/catalog-signup-data.json` and is not bundled.)
 
 ## Run the parser locally
 

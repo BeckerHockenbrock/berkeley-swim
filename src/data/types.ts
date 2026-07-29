@@ -124,11 +124,15 @@ export interface ScheduleData {
   passes: Pass[];
 }
 
-/** Static, hand-maintained content (not in the schedule PDFs). `catalog.json`. */
+/**
+ * Static, hand-maintained content (not in the schedule PDFs). `catalog.json`.
+ *
+ * Previously also carried `lessons` and `passes`. Those were removed when the
+ * app was narrowed to a schedule viewer — see `archive/signup-ui/`. The
+ * `Lesson` / `Lessons` / `Pass` types above are kept so restoring is cheap.
+ */
 export interface Catalog {
   programs: ProgramMap;
-  lessons: Lessons;
-  passes: Pass[];
 }
 
 /**

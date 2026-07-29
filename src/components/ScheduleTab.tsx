@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
-import { ChevronDown, ExternalLink, Tag, MapPin, CalendarOff } from 'lucide-react';
-import { passes, pools, programs } from '../data/loadSchedule';
+import { ChevronDown, Tag, MapPin, CalendarOff } from 'lucide-react';
+import { pools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
   addDaysIso,
@@ -16,7 +16,6 @@ import {
 import { programIcon } from '../lib/programIcons';
 import { POOL_KEYS, type DayKey, type PoolKey, type TimeSlot } from '../data/types';
 
-const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
 
 const DAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DAY_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -129,10 +128,6 @@ export function ScheduleTab() {
         ? `${pools[pool].label}'s ${pools[pool].season} schedule starts ${formatDate(poolStatus.validFrom)}.`
         : null;
 
-  // The "Register" CTA on the live cards points at the 10-Swim Pass (best value
-  // to get in), pulled from the passes data so it stays in sync.
-  const registerLink = passes.find((p) => p.name === '10-Swim Pass')?.link ?? OFFICIAL_CATALOG;
-
   return (
     <section className="flex flex-col gap-5">
       {/* Happening Now — both pools, side by side */}
@@ -151,7 +146,7 @@ export function ScheduleTab() {
               </div>
 
               {live.length > 0 ? (
-                live.map((r) => <HeroCard key={r.key} row={r} href={registerLink} />)
+                live.map((r) => <HeroCard key={r.key} row={r} />)
               ) : status.kind === 'upcoming' ? (
                 // The pool's schedule hasn't started yet — don't imply it's open.
                 <div className="rounded-2xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
@@ -301,7 +296,9 @@ export function ScheduleTab() {
   );
 }
 
-function HeroCard({ row, href }: { row: Row; href: string }) {
+// Deliberately has no "Register" CTA: this app is a schedule viewer, not a
+// signup surface. See archive/signup-ui/README.md before adding one back.
+function HeroCard({ row }: { row: Row }) {
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white shadow-md">
       <svg className="absolute inset-x-0 bottom-0 w-full opacity-20" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
@@ -314,15 +311,6 @@ function HeroCard({ row, href }: { row: Row; href: string }) {
         </span>
         <div className="font-display text-[18px] font-semibold uppercase tracking-wide leading-tight">{row.label}</div>
         <div className="text-[13px] font-medium text-white/90">{formatRange(row.slot)}</div>
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="focus-ring mt-0.5 self-start inline-flex items-center gap-1 text-[12px] font-semibold text-white/95 no-underline hover:text-white"
-        >
-          Register
-          <ExternalLink size={12} />
-        </a>
       </div>
     </div>
   );

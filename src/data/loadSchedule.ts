@@ -5,8 +5,10 @@ import { getBerkeleyNow } from '../lib/schedule';
 /**
  * Single source of truth for the app's data.
  *
- * - Static content (program descriptions, lessons, passes) lives in
- *   `catalog.json` and is hand-maintained.
+ * - Static content (program descriptions) lives in `catalog.json` and is
+ *   hand-maintained. Lessons and passes used to live here too; they were
+ *   removed when the app was narrowed to schedules only — see
+ *   `archive/signup-ui/`.
  * - Schedules live in `schedules/<pool>-<season>.json`, each generated from a
  *   City PDF by `scripts/parse_schedules.py`. We load every one and pick, per
  *   pool, the schedule whose date range covers today (Berkeley time) — so King
@@ -15,8 +17,6 @@ import { getBerkeleyNow } from '../lib/schedule';
 const catalog = catalogJson as Catalog;
 
 export const programs = catalog.programs;
-export const lessons = catalog.lessons;
-export const passes = catalog.passes;
 
 // Eagerly import every generated schedule. Adding a PDF (→ a new JSON) is picked
 // up here automatically with no code change.

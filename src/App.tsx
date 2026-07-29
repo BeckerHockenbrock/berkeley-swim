@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import { AlertTriangle, Waves, CalendarDays, Ticket, MapPin, Phone, MessageSquarePlus } from 'lucide-react';
+import { AlertTriangle, MapPin, Phone, MessageSquarePlus } from 'lucide-react';
 import { ScheduleTab } from './components/ScheduleTab';
-import { LessonsTab } from './components/LessonsTab';
-import { PassesTab } from './components/PassesTab';
 import { getBerkeleyNow, getScheduleStatus, formatDate } from './lib/schedule';
 import { pools } from './data/loadSchedule';
 
@@ -17,17 +14,15 @@ const FEEDBACK_MAILTO =
 
 const FULL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-const TABS = [
-  { key: 'schedule', label: 'Schedule', icon: CalendarDays },
-  { key: 'lessons', label: 'Lessons', icon: Waves },
-  { key: 'pass', label: 'Passes', icon: Ticket },
-] as const;
-
-type TabKey = (typeof TABS)[number]['key'];
-
+/**
+ * This app is a schedule viewer and nothing else.
+ *
+ * It used to carry Lessons and Passes tabs (and so a bottom tab bar). Those were
+ * removed on purpose — the site is unofficial and shouldn't look like a place
+ * you can register. The code is kept in `archive/signup-ui/`; read that README
+ * before adding a signup surface back.
+ */
 export default function App() {
-  const [tab, setTab] = useState<TabKey>('schedule');
-
   const now = getBerkeleyNow();
   const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
 
@@ -68,7 +63,7 @@ export default function App() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-28">
+      <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-10">
         {/* Staleness / closure notices */}
         {notice && (
           <div
@@ -83,9 +78,7 @@ export default function App() {
           </div>
         )}
 
-        {tab === 'schedule' && <ScheduleTab />}
-        {tab === 'lessons' && <LessonsTab />}
-        {tab === 'pass' && <PassesTab />}
+        <ScheduleTab />
 
         {/* Footer */}
         <footer className="mt-10 pt-6 border-t border-[#dadfe6] flex flex-col gap-3 text-[13px] text-[#51606e]">
@@ -112,29 +105,6 @@ export default function App() {
           </p>
         </footer>
       </main>
-
-      {/* Bottom tab bar */}
-      <nav className="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-[#dde3e9] pb-[env(safe-area-inset-bottom)]">
-        <div className="max-w-[680px] mx-auto px-2 grid grid-cols-3">
-          {TABS.map((t) => {
-            const Icon = t.icon;
-            const active = tab === t.key;
-            return (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                aria-current={active ? 'page' : undefined}
-                className={`focus-ring appearance-none bg-transparent border-none cursor-pointer flex flex-col items-center gap-1 py-2.5 transition-colors ${
-                  active ? 'text-[#2a5caa]' : 'text-[#8a97a6] hover:text-[#51606e]'
-                }`}
-              >
-                <Icon size={22} strokeWidth={active ? 2.5 : 2} />
-                <span className={`text-[11px] tracking-wide ${active ? 'font-semibold' : 'font-medium'}`}>{t.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
 
       <Analytics />
     </div>
