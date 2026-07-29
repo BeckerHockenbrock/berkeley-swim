@@ -100,6 +100,8 @@ export function ScheduleTab() {
     return { poolKey: pk, label: pools[pk].label, status, live, nextOpen: inRange ? findNextOpen(pk) : null };
   });
 
+  const anyPoolOpen = liveByPool.some((p) => p.live.length > 0);
+
   const nextDayLabel = (offset: number, dayIndex: number) =>
     offset === 0 ? 'today' : offset === 1 ? 'tomorrow' : DAY_FULL[dayIndex];
 
@@ -288,10 +290,10 @@ export function ScheduleTab() {
       )}
 
       {/* Floating Bottom Navigation Bar */}
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-[460px] w-[calc(100%-2rem)] px-1">
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-[500px] w-[calc(100%-1.5rem)] px-1">
         <nav
           aria-label="Pool view navigation"
-          className="bg-white/90 backdrop-blur-md border border-[#dde3e9] shadow-[0_8px_30px_rgba(0,0,0,0.12)] rounded-full p-1.5 flex items-center justify-between gap-1"
+          className="bg-white/95 backdrop-blur-md border border-[#cdd5df] shadow-[0_12px_40px_rgba(0,0,0,0.18)] rounded-full p-2 flex items-center justify-between gap-1.5"
         >
           {/* King (West / Left) */}
           <button
@@ -302,17 +304,17 @@ export function ScheduleTab() {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'king'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-[13px] sm:text-[14px] font-semibold transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold transition-all cursor-pointer ${
               activeTab === 'king'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
             }`}
           >
-            <MapPin size={14} className="shrink-0" />
+            <MapPin size={17} className="shrink-0" />
             <span className="truncate">King</span>
           </button>
 
-          {/* Happening Now (Center) */}
+          {/* Now (Center) */}
           <button
             type="button"
             onClick={() => {
@@ -320,17 +322,33 @@ export function ScheduleTab() {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'happening'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-[13px] sm:text-[14px] font-semibold transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold transition-all cursor-pointer ${
               activeTab === 'happening'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
             }`}
           >
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${activeTab === 'happening' ? 'bg-white' : 'bg-[#33c27f]'}`} />
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${activeTab === 'happening' ? 'bg-white' : 'bg-[#33c27f]'}`} />
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              {anyPoolOpen && (
+                <span
+                  className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                    activeTab === 'happening' ? 'bg-emerald-300' : 'bg-[#33c27f]'
+                  }`}
+                />
+              )}
+              <span
+                className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
+                  anyPoolOpen
+                    ? activeTab === 'happening'
+                      ? 'bg-emerald-300'
+                      : 'bg-[#33c27f]'
+                    : activeTab === 'happening'
+                      ? 'bg-red-300'
+                      : 'bg-[#e5484d]'
+                }`}
+              />
             </span>
-            <span className="truncate">Happening Now</span>
+            <span className="truncate">Now</span>
           </button>
 
           {/* West Campus (East / Right) */}
@@ -342,13 +360,13 @@ export function ScheduleTab() {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'west'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-[13px] sm:text-[14px] font-semibold transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold transition-all cursor-pointer ${
               activeTab === 'west'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
             }`}
           >
-            <MapPin size={14} className="shrink-0" />
+            <MapPin size={17} className="shrink-0" />
             <span className="truncate">West Campus</span>
           </button>
         </nav>
