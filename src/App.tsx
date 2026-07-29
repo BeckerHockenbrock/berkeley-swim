@@ -63,7 +63,7 @@ export default function App() {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-10">
+      <main className="flex-1 w-full max-w-[680px] mx-auto px-4 pt-4 pb-28">
         {/* Staleness / closure notices */}
         {notice && (
           <div
