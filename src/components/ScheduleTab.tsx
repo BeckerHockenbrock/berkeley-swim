@@ -144,7 +144,13 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <h2 className="font-display text-[22px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">Happening Now</h2>
-            <span className="w-2.5 h-2.5 rounded-full bg-[#33c27f] shadow-[0_0_0_3px_rgba(51,194,127,0.25)]" />
+            <span
+              className={`w-2.5 h-2.5 rounded-full ${
+                anyPoolOpen
+                  ? 'bg-[#33c27f] shadow-[0_0_0_3px_rgba(51,194,127,0.25)]'
+                  : 'bg-[#e5484d] shadow-[0_0_0_3px_rgba(229,72,77,0.25)]'
+              }`}
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
