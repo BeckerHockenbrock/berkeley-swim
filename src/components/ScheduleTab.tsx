@@ -307,7 +307,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-[500px] w-[calc(100%-1.5rem)] px-1">
         <nav
           aria-label="Pool view navigation"
-          className="bg-white/95 backdrop-blur-md border border-[#cdd5df] shadow-[0_12px_40px_rgba(0,0,0,0.18)] rounded-full p-1.5 grid grid-cols-3 gap-1 items-center"
+          className="bg-white/95 backdrop-blur-md border border-[#cdd5df] shadow-[0_12px_40px_rgba(0,0,0,0.18)] rounded-full p-2 flex items-center justify-between gap-1.5"
         >
           {/* King (West / Left) */}
           <button
@@ -318,7 +318,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'king'}
-            className={`focus-ring flex items-center justify-center gap-2 py-3 px-3 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'king'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
@@ -336,7 +336,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'happening'}
-            className={`focus-ring flex items-center justify-center gap-2 py-3 px-3 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'happening'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
@@ -374,7 +374,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'west'}
-            className={`focus-ring flex items-center justify-center gap-2 py-3 px-3 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'west'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
