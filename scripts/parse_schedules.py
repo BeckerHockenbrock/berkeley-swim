@@ -34,7 +34,7 @@ MONTHS = {m: i + 1 for i, m in enumerate(
     "january february march april may june july august september october november december".split()
 )}
 SEASON_BY_MONTH = {3: "Spring", 4: "Spring", 5: "Spring", 6: "Summer", 7: "Summer",
-                   8: "Summer", 9: "Fall", 10: "Fall", 11: "Fall",
+                   8: "Fall", 9: "Fall", 10: "Fall", 11: "Fall",
                    12: "Winter", 1: "Winter", 2: "Winter"}
 
 # A time range. Tolerant of split tokens and whitespace around the dash / am-pm,
