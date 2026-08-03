@@ -1,5 +1,5 @@
 /**
- * Type definitions for the Berkeley Swim data contract.
+ * Type definitions for the Berkeley Pools data contract.
  *
  * `schedule.json` conforms to {@link ScheduleData}. This is the schema the
  * future PDF parser must emit. Keep this file and `schedule.json` in sync —
