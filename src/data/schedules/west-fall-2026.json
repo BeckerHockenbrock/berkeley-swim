@@ -1,0 +1,367 @@
+{
+  "pool": "west",
+  "poolLabel": "West Campus Pool",
+  "address": "2100 Browning St",
+  "season": "Fall 2026",
+  "validFrom": "2026-08-10",
+  "validThrough": "2026-10-11",
+  "lastUpdated": "2026-07-21",
+  "timezone": "America/Los_Angeles",
+  "closedDates": [
+    "2026-09-07"
+  ],
+  "programClosures": {},
+  "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/west-campus-pool",
+  "schedule": {
+    "lap-swim": {
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00",
+          "limited": true
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        },
+        {
+          "start": "11:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "14:30",
+          "end": "16:30",
+          "limited": true
+        },
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "09:00"
+        },
+        {
+          "start": "09:00",
+          "end": "12:00",
+          "limited": true
+        }
+      ]
+    },
+    "aqua-zumba": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [],
+      "sun": [
+        {
+          "start": "09:00",
+          "end": "10:00"
+        }
+      ]
+    },
+    "senior-exercise": {
+      "mon": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "10:00",
+          "end": "11:00"
+        }
+      ],
+      "sat": [],
+      "sun": []
+    },
+    "independent-exercise": {
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:30",
+          "end": "19:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        }
+      ]
+    },
+    "family-swim": {
+      "mon": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "08:00",
+          "end": "13:00"
+        }
+      ],
+      "fri": [
+        {
+          "start": "09:00",
+          "end": "13:00"
+        },
+        {
+          "start": "17:00",
+          "end": "19:00"
+        }
+      ],
+      "sat": [
+        {
+          "start": "16:30",
+          "end": "18:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "08:00",
+          "end": "10:00"
+        }
+      ]
+    },
+    "swim-lessons": {
+      "mon": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "tue": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "wed": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "thu": [
+        {
+          "start": "16:30",
+          "end": "19:00"
+        }
+      ],
+      "fri": [],
+      "sat": [],
+      "sun": []
+    },
+    "community-swim": {
+      "mon": [],
+      "tue": [],
+      "wed": [],
+      "thu": [],
+      "fri": [],
+      "sat": [
+        {
+          "start": "14:30",
+          "end": "16:30"
+        }
+      ],
+      "sun": [
+        {
+          "start": "10:00",
+          "end": "12:00"
+        }
+      ]
+    },
+    "shower-program": {
+      "mon": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "tue": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "wed": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "thu": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "fri": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "sat": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ],
+      "sun": [
+        {
+          "start": "19:15",
+          "end": "20:15"
+        }
+      ]
+    }
+  }
+}
