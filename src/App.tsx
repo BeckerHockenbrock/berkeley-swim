@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { AlertTriangle, MapPin, Phone, MessageSquarePlus } from 'lucide-react';
 import { ScheduleTab } from './components/ScheduleTab';
 import { DevBar } from './components/DevBar';
 import { getBerkeleyNow, getScheduleStatus, formatDate } from './lib/schedule';
-import { pools } from './data/loadSchedule';
+import { resolvePools } from './data/loadSchedule';
 
 const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
 const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
@@ -22,6 +22,7 @@ export default function App() {
   const [overrideDate, setOverrideDate] = useState<Date | null>(null);
   const now = getBerkeleyNow(overrideDate ?? undefined);
   const todayLabel = `${FULL_DAYS[now.dayIndex]}, ${formatDate(now.dateISO)}`;
+  const pools = useMemo(() => resolvePools(now.dateISO), [now.dateISO]);
 
   const bothClosed = [pools.king, pools.west].every(
     (p) => getScheduleStatus(p, now.dateISO).kind === 'closed',

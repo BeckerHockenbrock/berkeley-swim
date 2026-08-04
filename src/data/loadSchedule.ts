@@ -1,6 +1,5 @@
 import catalogJson from './catalog.json';
 import { POOL_KEYS, type Catalog, type PoolKey, type PoolSeason, type ResolvedPool } from './types';
-import { getBerkeleyNow } from '../lib/schedule';
 
 /**
  * Single source of truth for the app's data.
@@ -56,8 +55,16 @@ function resolvePool(pool: PoolKey, todayISO: string): ResolvedPool {
   };
 }
 
-const today = getBerkeleyNow().dateISO;
-
-export const pools = Object.fromEntries(
-  POOL_KEYS.map((p) => [p, resolvePool(p, today)]),
-) as Record<PoolKey, ResolvedPool>;
+/**
+ * Resolve both pools for a given date.
+ *
+ * Call this with the date the UI is actually rendering — never cache it at
+ * module scope. A module-level constant is computed once when the bundle
+ * loads, so it would ignore the dev bar's time travel and would keep serving
+ * last season to any tab (or installed PWA) left open across a changeover.
+ */
+export function resolvePools(todayISO: string): Record<PoolKey, ResolvedPool> {
+  return Object.fromEntries(
+    POOL_KEYS.map((p) => [p, resolvePool(p, todayISO)]),
+  ) as Record<PoolKey, ResolvedPool>;
+}

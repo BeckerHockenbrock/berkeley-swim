@@ -14,7 +14,16 @@
     "2026-06-06",
     "2026-06-07"
   ],
-  "programClosures": {},
+  "programClosures": {
+    "swim-lessons": [
+      "2026-03-02",
+      "2026-03-03",
+      "2026-03-04",
+      "2026-03-05",
+      "2026-03-06",
+      "2026-03-07"
+    ]
+  },
   "source": "https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs/king-pool",
   "schedule": {
     "lap-swim": {

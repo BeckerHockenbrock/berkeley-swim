@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { ChevronDown, Tag, MapPin, CalendarOff, ArrowRight } from 'lucide-react';
-import { pools, programs } from '../data/loadSchedule';
+import { resolvePools, programs } from '../data/loadSchedule';
 import {
   DAY_KEYS,
   addDaysIso,
@@ -45,6 +45,7 @@ interface ScheduleTabProps {
 
 export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
   const now = getBerkeleyNow(overrideDate ?? undefined);
+  const pools = useMemo(() => resolvePools(now.dateISO), [now.dateISO]);
   const [activeTab, setActiveTab] = useState<ViewTab>('happening');
   const [pool, setPool] = useState<PoolKey>('king');
   const [day, setDay] = useState<number>(now.dayIndex);
@@ -78,7 +79,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
       }
       return rows.sort((a, b) => minutesOf(a.slot.start) - minutesOf(b.slot.start));
     };
-  }, [now.minutes]);
+  }, [pools, now.minutes]);
 
   // The next opening for a pool: an upcoming slot later today, or — if the pool
   // is done/closed for the day — the first session on the next open day. Skips
@@ -318,7 +319,8 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'king'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            aria-label="King Pool"
+            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'king'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
@@ -336,7 +338,7 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'happening'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'happening'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
@@ -374,14 +376,15 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'west'}
-            className={`focus-ring flex-1 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
+            aria-label="West Campus Pool"
+            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
               activeTab === 'west'
                 ? 'bg-[#2a5caa] text-white shadow-sm'
                 : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
             }`}
           >
             <MapPin size={17} className="shrink-0" />
-            <span className="truncate">West Campus</span>
+            <span className="truncate">West</span>
           </button>
         </nav>
       </div>

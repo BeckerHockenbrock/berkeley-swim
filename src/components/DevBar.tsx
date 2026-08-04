@@ -12,6 +12,8 @@ const PRESETS = [
   { label: 'Wed 1:00 PM', isoDate: '2026-07-29', time: '13:00' },
   { label: 'Sat 10:00 AM', isoDate: '2026-08-01', time: '10:00' },
   { label: 'Sun 9:00 PM (Closed)', isoDate: '2026-08-02', time: '21:00' },
+  // Season changeover: the first day the Fall schedule takes over from Summer.
+  { label: 'Mon 7:00 AM (Fall)', isoDate: '2026-08-10', time: '07:00' },
 ];
 
 export function DevBar({ overrideDate, onOverrideChange }: DevBarProps) {

@@ -218,6 +218,26 @@ def parse_program_closures(text: str, valid_from: str, valid_through: str) -> di
             iso = resolve_in_season(month, day, valid_from, valid_through)
             if iso and iso not in out.setdefault(slug, []):
                 out[slug].append(iso)
+                
+    start_pattern = r"(?:Weekday|Weekend)\s+(?:Fall\s+)?([A-Za-z][A-Za-z ]+?)\s+will\s+start\s+(?:[A-Za-z]+,?\s+)?([A-Za-z]+)\s+(\d{1,2})"
+    for prog, mon, d1 in re.findall(start_pattern, text):
+        slug = slugify(prog.strip())
+        month = MONTHS.get(mon.lower())
+        if not slug or not month:
+            continue
+        start_date = resolve_in_season(month, int(d1), valid_from, valid_through)
+        if not start_date:
+            continue
+        from datetime import datetime, timedelta
+        vf = datetime.strptime(valid_from, "%Y-%m-%d")
+        sd = datetime.strptime(start_date, "%Y-%m-%d")
+        curr = vf
+        while curr < sd:
+            iso = curr.strftime("%Y-%m-%d")
+            if iso not in out.setdefault(slug, []):
+                out[slug].append(iso)
+            curr += timedelta(days=1)
+            
     for slug in out:
         out[slug].sort()
     return out
