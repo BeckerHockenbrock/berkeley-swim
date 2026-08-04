@@ -54,3 +54,32 @@ describe('resolvePools', () => {
     expect(resolvePools('2027-01-01').king.season).toBe('Fall 2026');
   });
 });
+
+/**
+ * Late-starting programs. Both Fall PDFs say swim lessons skip the opening
+ * weeks — but each note covers only *one* group of days ("Weekend Fall Swim
+ * Lessons will start September 13" at King, "Weekday ... September 14" at
+ * West). The parser has to honour that qualifier: blanking the program on every
+ * day of the week would hide sessions that genuinely run.
+ */
+describe('swim-lesson late starts (Fall 2026)', () => {
+  const isBlanked = (pool: 'king' | 'west', dateISO: string) =>
+    resolvePools(dateISO)[pool].programClosures['swim-lessons']?.includes(dateISO) ?? false;
+
+  it('hides King weekend lessons until they start on Sept 13', () => {
+    expect(isBlanked('king', '2026-09-06')).toBe(true); // Sunday before
+    expect(isBlanked('king', '2026-09-13')).toBe(false); // first Sunday they run
+  });
+
+  it('hides West weekday lessons until they start on Sept 14', () => {
+    expect(isBlanked('west', '2026-09-11')).toBe(true); // Friday before
+    expect(isBlanked('west', '2026-09-14')).toBe(false); // first Monday they run
+  });
+
+  it('does not blank days the note never covered', () => {
+    // King's note is about weekends, so weekdays must stay untouched — and
+    // vice-versa at West. This is what a qualifier-blind parser would break.
+    expect(isBlanked('king', '2026-08-12')).toBe(false); // a Wednesday
+    expect(isBlanked('west', '2026-08-15')).toBe(false); // a Saturday
+  });
+});

@@ -11,7 +11,11 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['logo.png', 'og.png', 'apple-touch-icon.png'],
+        // Fonts are precached so the installed PWA keeps its typography offline.
+        // og.jpg is deliberately absent: it's a social-preview image fetched by
+        // crawlers straight from the origin, never by the app. Precaching it
+        // would cost every installing device a download it never uses.
+        includeAssets: ['logo.png', 'apple-touch-icon.png', 'fonts/*.woff2'],
         manifest: {
           name: 'Berkeley Pools',
           short_name: 'Berkeley Pools',
@@ -34,13 +38,6 @@ export default defineConfig(() => {
       alias: {
         '@': path.resolve(__dirname, '.'),
       },
-    },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };
 });

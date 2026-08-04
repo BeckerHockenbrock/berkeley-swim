@@ -1,5 +1,39 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Teko:wght@500;600;700&display=swap');
 @import "tailwindcss";
+
+/**
+ * Self-hosted fonts (see public/fonts/, SIL Open Font License 1.1).
+ *
+ * These used to come from fonts.googleapis.com. Serving them from our own
+ * origin removes a render-blocking third-party request, keeps the typography
+ * intact when the installed PWA runs offline, and stops sending every
+ * visitor's IP to Google — worth caring about for a civic-adjacent site.
+ *
+ * All three are variable fonts covering the weights below in a single file, so
+ * the whole set is ~58 KB. Latin subset only; the app is English-only.
+ */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-italic-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Teko';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('/fonts/teko-latin.woff2') format('woff2');
+}
 
 @theme {
   --font-sans: "Source Sans 3", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;

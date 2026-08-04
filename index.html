@@ -4,24 +4,34 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Unofficial guide to Berkeley public pool schedules, swim lessons, and passes. Not affiliated with the City of Berkeley." />
+    <meta name="description" content="Unofficial, mobile-friendly schedules for Berkeley's public pools — King & West Campus. Lap swim, family swim, lessons and more. Not affiliated with the City of Berkeley." />
     <meta name="theme-color" content="#2a5caa" />
     <link rel="icon" type="image/png" href="/logo.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Self-hosted (see public/fonts/). Preload only the two faces used above
+         the fold; the italic loads on demand. -->
+    <link rel="preload" href="/fonts/source-sans-3-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/teko-latin.woff2" as="font" type="font/woff2" crossorigin />
     <title>Berkeley Pools — Unofficial Aquatics Schedule</title>
 
-    <!-- Social / link previews. URLs use the canonical domain; if berkeleypools.com
-         isn't pointed at this Vercel project yet, swap these to your *.vercel.app address. -->
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
+
+    <!-- Social / link previews. Crawlers require absolute URLs, so the origin is
+         substituted from VITE_SITE_URL at build time — see .env to repoint it. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Berkeley Pools" />
     <meta property="og:title" content="Berkeley Pools — when the pools are actually open" />
     <meta property="og:description" content="Readable schedules for Berkeley's public pools — King & West Campus. See when each is open for lap swim, family swim, lessons, and more. Unofficial." />
-    <meta property="og:image" content="https://berkeleypools.com/og.png" />
-    <meta property="og:url" content="https://berkeleypools.com/" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content="%VITE_SITE_URL%/og.jpg" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Berkeley Pools — when the pools are actually open" />
-    <meta name="twitter:description" content="Readable schedules for Berkeley's public pools — King & West Campus. Lap swim, family swim, lessons, passes. Unofficial." />
-    <meta name="twitter:image" content="https://berkeleypools.com/og.png" />
+    <meta name="twitter:description" content="Readable schedules for Berkeley's public pools — King & West Campus. Lap swim, family swim, lessons, and more. Unofficial." />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/og.jpg" />
   </head>
   <body>
     <div id="root"></div>

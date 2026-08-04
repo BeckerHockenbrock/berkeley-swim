@@ -8,8 +8,19 @@ import { resolvePools } from './data/loadSchedule';
 
 const OFFICIAL_CATALOG = 'https://rec.berkeleyca.gov/CA/berkeley-ca/catalog';
 const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
+/**
+ * Feedback address, assembled at runtime rather than written as a literal so it
+ * never appears as a matchable `user@host` string in the shipped bundle. That
+ * defeats the regex harvesters that scrape public sites for addresses; it is
+ * not real protection against a crawler that executes our JavaScript.
+ *
+ * The durable fix is a dedicated alias you can rotate or filter on if it does
+ * start attracting spam — swap the two halves below and nothing else changes.
+ */
+const FEEDBACK_ADDRESS = ['bhocken91', 'gmail.com'].join('@');
+
 const FEEDBACK_MAILTO =
-  'mailto:bhocken91@gmail.com?subject=' +
+  `mailto:${FEEDBACK_ADDRESS}?subject=` +
   encodeURIComponent('Berkeley Pools — bug / feature') +
   '&body=' +
   encodeURIComponent("What's wrong, or what would you like to see?\n\n");

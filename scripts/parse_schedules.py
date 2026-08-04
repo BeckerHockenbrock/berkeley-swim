@@ -20,6 +20,7 @@ import json
 import re
 import sys
 from collections import Counter, defaultdict
+from datetime import date, timedelta
 from pathlib import Path
 
 import pdfplumber
@@ -45,6 +46,21 @@ RANGE_RE = re.compile(
     r"(\d{1,2}):(\d{2})\s*(am|pm)\s*[-–—]\s*(\d{1,2}):(\d{2})\s*(am|pm)\s*(\*\*)?",
     re.IGNORECASE,
 )
+
+# "Weekend Fall Swim Lessons will start September 13." — a program that sits out
+# the first stretch of its own season. The Weekday/Weekend qualifier is captured
+# and honoured: a pool can run the same program on both (King's Summer schedule
+# has swim lessons Mon–Thu *and* Sunday), and a note like this covers only one of
+# those groups. Blanking the program outright would hide sessions that do run.
+START_RE = re.compile(
+    r"(Weekday|Weekend)\s+(?:(?:Spring|Summer|Fall|Winter)\s+)?"
+    r"([A-Za-z][A-Za-z ]+?)\s+will\s+start\s+(?:on\s+)?(?:[A-Za-z]+,?\s+)?"
+    r"([A-Za-z]+)\s+(\d{1,2})",
+    re.IGNORECASE,
+)
+
+# `date.weekday()`: Mon=0 … Sun=6.
+WEEKEND_DAYS = {5, 6}
 
 # Program label (lowercased) → slug. First keyword hit wins.
 SLUG_RULES = [
@@ -218,9 +234,10 @@ def parse_program_closures(text: str, valid_from: str, valid_through: str) -> di
             iso = resolve_in_season(month, day, valid_from, valid_through)
             if iso and iso not in out.setdefault(slug, []):
                 out[slug].append(iso)
-                
-    start_pattern = r"(?:Weekday|Weekend)\s+(?:Fall\s+)?([A-Za-z][A-Za-z ]+?)\s+will\s+start\s+(?:[A-Za-z]+,?\s+)?([A-Za-z]+)\s+(\d{1,2})"
-    for prog, mon, d1 in re.findall(start_pattern, text):
+
+    # Late-starting programs: blank every date from the season opening up to the
+    # stated start, but only on the days of week the note actually covers.
+    for qualifier, prog, mon, d1 in START_RE.findall(text):
         slug = slugify(prog.strip())
         month = MONTHS.get(mon.lower())
         if not slug or not month:
@@ -228,26 +245,29 @@ def parse_program_closures(text: str, valid_from: str, valid_through: str) -> di
         start_date = resolve_in_season(month, int(d1), valid_from, valid_through)
         if not start_date:
             continue
-        from datetime import datetime, timedelta
-        vf = datetime.strptime(valid_from, "%Y-%m-%d")
-        sd = datetime.strptime(start_date, "%Y-%m-%d")
-        curr = vf
-        while curr < sd:
-            iso = curr.strftime("%Y-%m-%d")
-            if iso not in out.setdefault(slug, []):
-                out[slug].append(iso)
+        weekend_only = qualifier.lower() == "weekend"
+        curr, stop = date.fromisoformat(valid_from), date.fromisoformat(start_date)
+        while curr < stop:
+            if (curr.weekday() in WEEKEND_DAYS) == weekend_only:
+                iso = curr.isoformat()
+                if iso not in out.setdefault(slug, []):
+                    out[slug].append(iso)
             curr += timedelta(days=1)
-            
+
     for slug in out:
         out[slug].sort()
     return out
 
 
 def parse_pdf(path: Path) -> dict:
-    page = pdfplumber.open(path).pages[0]
-    words = page.extract_words()
-    text = page.extract_text() or ""
+    with pdfplumber.open(path) as pdf:
+        page = pdf.pages[0]
+        words = page.extract_words()
+        text = page.extract_text() or ""
+        return build_season(page, words, text, path)
 
+
+def build_season(page, words, text: str, path: Path) -> dict:
     pool = "king" if "KING" in text.upper()[:400] else "west"
     label, address, source = POOLS[pool]
 
@@ -294,11 +314,13 @@ def main() -> int:
         return 0
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     written = []
+    failed = []
     for pdf in pdfs:
         try:
             data = parse_pdf(pdf)
         except Exception as exc:  # noqa: BLE001 — surface a clear per-file error
             print(f"  ✗ {pdf.name}: {exc}")
+            failed.append(pdf.name)
             continue
         slug = f"{data['pool']}-{data['season'].lower().replace(' ', '-')}.json"
         out = OUT_DIR / slug
@@ -308,6 +330,11 @@ def main() -> int:
         print(f"  ✓ {pdf.name} → {slug}  ({len(data['schedule'])} programs, {n} slots, "
               f"{data['validFrom']}→{data['validThrough']})")
     print(f"\nWrote {len(written)} schedule file(s) to {OUT_DIR.relative_to(ROOT)}/")
+    if failed:
+        # Exit non-zero so CI fails loudly. Otherwise a PDF the parser can't read
+        # is a green build that quietly leaves the site on last season's times.
+        print(f"FAILED to parse {len(failed)} PDF(s): {', '.join(failed)}")
+        return 1
     return 0
 
 

@@ -28,7 +28,9 @@ pdfs/*.pdf  ──▶  scripts/parse_schedules.py  ──▶  src/data/schedules
 2. **Push it.** The [`update-schedules`](.github/workflows/update-schedules.yml) GitHub Action runs the parser, commits the regenerated JSON, and Vercel redeploys.
 3. The app loads every schedule and shows, **per pool**, the one whose date range covers today (Berkeley time) — so King and West can be on different seasons during a changeover.
 
-The parser ([`scripts/parse_schedules.py`](scripts/parse_schedules.py)) reads each PDF's program × day grid by locating the row-separator rules and day-column positions, then assigns each time token to a cell by coordinate. It also extracts the date range, the `**` limited-lane markers, and closure dates from the page text. Output conforms to the `PoolSeason` contract in [`src/data/types.ts`](src/data/types.ts).
+The parser ([`scripts/parse_schedules.py`](scripts/parse_schedules.py)) reads each PDF's program × day grid by locating the row-separator rules and day-column positions, then assigns each time token to a cell by coordinate. It also extracts the date range, the `**` limited-lane markers, and — from the "Important Notes" prose — full-pool closures, single-program cancellations, and late-starting programs. Output conforms to the `PoolSeason` contract in [`src/data/types.ts`](src/data/types.ts).
+
+A late-start note ("Weekend Fall Swim Lessons will start September 13") is applied only to the days of week it names, because a pool can run the same program on both weekdays and weekends under different start dates. If a PDF fails to parse the script exits non-zero, so the Action fails loudly rather than leaving the site quietly on last season's times.
 
 > Validated against the previously hand-typed schedule: the parser reproduced it exactly except for three cells where the hand-typed data was wrong and the parser was right.
 
@@ -52,6 +54,18 @@ npm run lint     # tsc --noEmit
 npm run test     # vitest
 npm run build    # production build (also generates the PWA service worker)
 ```
+
+### Configuration
+
+`VITE_SITE_URL` in [`.env`](.env) is the canonical public origin. Social crawlers
+require absolute URLs, so `index.html` substitutes it into the `og:`/`twitter:`
+and `canonical` tags at build time — pointing a custom domain at this project
+means changing that one line (or setting the variable in Vercel).
+
+Fonts are self-hosted from [`public/fonts/`](public/fonts/) rather than loaded
+from Google, which keeps the installed PWA's typography working offline and
+avoids sending visitor IPs to a third party. See that directory's README to
+refresh them.
 
 ## Stack
 
