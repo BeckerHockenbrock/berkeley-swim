@@ -62,10 +62,9 @@ require absolute URLs, so `index.html` substitutes it into the `og:`/`twitter:`
 and `canonical` tags at build time — pointing a custom domain at this project
 means changing that one line (or setting the variable in Vercel).
 
-Fonts are self-hosted from [`public/fonts/`](public/fonts/) rather than loaded
-from Google, which keeps the installed PWA's typography working offline and
-avoids sending visitor IPs to a third party. See that directory's README to
-refresh them.
+The interface uses the platform system font stack, so it does not make a
+third-party font request and remains typographically native when installed as a
+PWA.
 
 ## Stack
 

@@ -1,10 +1,9 @@
-# Self-hosted fonts
+# Archived self-hosted fonts
 
-Both families are used under the SIL Open Font License 1.1 (full text in
-`OFL.txt`). They were previously loaded from `fonts.googleapis.com`; serving
-them from this origin drops a render-blocking third-party request, keeps the
-installed PWA's typography working offline, and avoids sending visitor IPs to
-Google.
+These font files powered the earlier City-inspired design. The current
+interface uses the platform system font stack and does not preload or precache
+them; they remain here only as licensed design-history assets. Both families
+are available under the SIL Open Font License 1.1 (full text in `OFL.txt`).
 
 | File | Family | Copyright |
 |---|---|---|
@@ -12,10 +11,8 @@ Google.
 | `teko-latin.woff2` | [Teko](https://fonts.google.com/specimen/Teko) | 2023 The Teko Project Authors |
 
 Each file is a **variable** font covering its whole declared weight range in one
-download (Source Sans 3 400–700, Teko 500–700), subset to **latin** only — the
-app is English-only. That's ~58 KB for the entire type system.
+file (Source Sans 3 400–700, Teko 500–700), subset to **latin** only.
 
-To refresh them, re-request the Google Fonts CSS2 API with a modern browser
-user-agent, keep only the `/* latin */` `@font-face` blocks, and download the
-`.woff2` each one points at. The `@font-face` declarations live in
-`src/index.css`.
+If a future design deliberately restores them, add local `@font-face`
+declarations and PWA caching at the same time so installed typography stays
+available offline.

@@ -1,7 +1,8 @@
 import { Component, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
-const OFFICIAL_AQUATICS = 'https://berkeleyca.gov/community-recreation/parks-recreation/aquatics';
+const OFFICIAL_AQUATICS =
+  'https://berkeleyca.gov/community-recreation/parks-recreation/facilities/pools-and-aquatic-programs';
 
 interface Props {
   children: ReactNode;
@@ -30,23 +31,21 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.failed) return this.props.children;
 
     return (
-      <div className="min-h-screen bg-[#eef1f5] text-[#1a1a1a] font-sans flex items-center justify-center px-4">
-        <div className="max-w-[420px] w-full bg-white rounded-2xl border border-[#dde3e9] shadow-sm p-6 flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-[#7c2229]">
-            <AlertTriangle size={20} className="shrink-0" />
-            <h1 className="font-display text-[22px] font-semibold uppercase tracking-wide leading-none">
-              Something went wrong
-            </h1>
+      <div className="error-page">
+        <div className="error-card">
+          <div className="error-card__heading">
+            <AlertTriangle size={22} aria-hidden="true" />
+            <h1>Something went wrong</h1>
           </div>
-          <p className="text-[14px] text-[#51606e] leading-relaxed">
+          <p>
             This unofficial schedule failed to load. Reload the page, or check the City's
             official listings for today's times.
           </p>
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div className="error-card__actions">
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="focus-ring inline-flex items-center h-9 px-4 rounded-lg bg-[#2a5caa] text-white text-[13px] font-semibold cursor-pointer hover:bg-[#224a89] transition-colors"
+              className="error-card__primary pressable"
             >
               Reload
             </button>
@@ -54,9 +53,9 @@ export class ErrorBoundary extends Component<Props, State> {
               href={OFFICIAL_AQUATICS}
               target="_blank"
               rel="noopener noreferrer"
-              className="focus-ring inline-flex items-center h-9 px-4 rounded-lg border border-[#c2cad3] text-[13px] font-semibold text-[#1f4b7a] no-underline hover:border-[#2a5caa] hover:bg-[#f4f7fb] transition-colors"
+              className="error-card__secondary pressable"
             >
-              City of Berkeley Aquatics ↗
+              City pool information ↗
             </a>
           </div>
         </div>

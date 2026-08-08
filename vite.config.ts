@@ -11,11 +11,10 @@ export default defineConfig(() => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        // Fonts are precached so the installed PWA keeps its typography offline.
-        // og.jpg is deliberately absent: it's a social-preview image fetched by
-        // crawlers straight from the origin, never by the app. Precaching it
-        // would cost every installing device a download it never uses.
-        includeAssets: ['logo.png', 'apple-touch-icon.png', 'fonts/*.woff2'],
+        // The interface uses the platform system font, so only app-owned image
+        // assets need to be precached. og.jpg is deliberately absent: it is a
+        // social-preview image fetched by crawlers, never by the app.
+        includeAssets: ['logo.png', 'apple-touch-icon.png'],
         manifest: {
           name: 'Berkeley Pools',
           short_name: 'Berkeley Pools',
@@ -24,8 +23,8 @@ export default defineConfig(() => {
           scope: '/',
           display: 'standalone',
           orientation: 'portrait',
-          background_color: '#16335c',
-          theme_color: '#2a5caa',
+          background_color: '#f3f6fa',
+          theme_color: '#f3f6fa',
           icons: [
             {src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any'},
             {src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any'},

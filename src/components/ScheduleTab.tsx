@@ -33,9 +33,9 @@ interface Row {
 }
 
 const STATUS_PILL: Record<SlotStatus, { text: string; cls: string } | null> = {
-  live: { text: 'Open now', cls: 'text-[#1a7a43] bg-[#e7f6ec] border-[#bfe6cd]' },
-  upcoming: { text: 'Upcoming', cls: 'text-[#51606e] bg-[#eef1f4] border-[#dde3e9]' },
-  ended: { text: 'Ended', cls: 'text-[#9aa6b2] bg-[#f4f6f8] border-[#e3e8ee]' },
+  live: { text: 'Open now', cls: 'is-live' },
+  upcoming: { text: 'Upcoming', cls: 'is-upcoming' },
+  ended: { text: 'Ended', cls: 'is-ended' },
   scheduled: null,
 };
 
@@ -54,7 +54,22 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
 
   useEffect(() => {
     setDay(now.dayIndex);
+    setActivity('all');
+    setOpenKey(null);
   }, [now.dayIndex]);
+
+  const showPoolSchedule = (poolKey: PoolKey) => {
+    setPool(poolKey);
+    setActiveTab(poolKey === 'king' ? 'king' : 'west');
+    setActivity('all');
+    setOpenKey(null);
+  };
+
+  const showDay = (dayIndex: number) => {
+    setDay(dayIndex);
+    setActivity('all');
+    setOpenKey(null);
+  };
 
   const buildRows = useMemo(() => {
     return (poolKey: PoolKey, dKey: DayKey, dateISO: string, isToday: boolean): Row[] => {
@@ -139,198 +154,196 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
         : null;
 
   return (
-    <section className="flex flex-col gap-5">
-      {/* Happening Now View */}
+    <section className="schedule-shell" aria-label="Berkeley pool schedules">
       {activeTab === 'happening' && (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
-            <h2 className="font-display text-[22px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">Happening Now</h2>
-            <span
-              className={`w-2.5 h-2.5 rounded-full ${
-                anyPoolOpen
-                  ? 'bg-[#33c27f] shadow-[0_0_0_3px_rgba(51,194,127,0.25)]'
-                  : 'bg-[#e5484d] shadow-[0_0_0_3px_rgba(229,72,77,0.25)]'
-              }`}
-            />
-          </div>
+        <div className="schedule-view schedule-view-now">
+          <header className="view-heading">
+            <div>
+              <p className="view-eyebrow">Berkeley pools</p>
+              <h2>Happening now</h2>
+            </div>
+            <div
+              className={`live-status ${anyPoolOpen ? 'has-live-sessions' : 'is-quiet'}`}
+              aria-live="polite"
+            >
+              <span className="live-status-dot" aria-hidden="true" />
+              <span>{anyPoolOpen ? 'Sessions in progress' : 'No sessions in progress'}</span>
+            </div>
+          </header>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-start">
+          <div className="pool-overview-grid">
             {liveByPool.map(({ poolKey, label, status, live, nextOpen }) => (
-              <div key={poolKey} className="flex flex-col gap-2 min-w-0 bg-white rounded-2xl p-3.5 border border-[#dde3e9] shadow-sm">
-                <div className="flex items-center justify-between gap-1 text-[12px] font-semibold uppercase tracking-wider text-[#51606e]">
-                  <div className="flex items-center gap-1.5 truncate">
-                    <MapPin size={13} className="shrink-0 text-[#9aa6b2]" />
-                    <span className="truncate">{label}</span>
+              <article key={poolKey} className="pool-overview-card">
+                <header className="pool-card-header">
+                  <div className="pool-card-title">
+                    <MapPin size={16} aria-hidden="true" />
+                    <h3>{label}</h3>
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setPool(poolKey);
-                      setActiveTab(poolKey === 'king' ? 'king' : 'west');
-                      setOpenKey(null);
-                    }}
-                    className="text-[11px] text-[#2a5caa] hover:underline font-semibold lowercase flex items-center gap-0.5 shrink-0 cursor-pointer"
+                    onClick={() => showPoolSchedule(poolKey)}
+                    className="pool-card-action pressable focus-ring"
+                    aria-label={`View ${label} schedule`}
                   >
-                    view schedule <ArrowRight size={11} />
+                    <span>View schedule</span>
+                    <ArrowRight size={14} aria-hidden="true" />
                   </button>
-                </div>
+                </header>
 
-                {live.length > 0 ? (
-                  live.map((r) => <HeroCard key={r.key} row={r} />)
-                ) : status.kind === 'upcoming' ? (
-                  <div className="rounded-xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
-                    {pools[poolKey].season} schedule starts {formatDate(status.validFrom)}.
-                  </div>
-                ) : status.kind === 'expired' ? (
-                  <div className="rounded-xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
-                    No current schedule — check the official catalog.
-                  </div>
-                ) : nextOpen && nextOpen.offset > 0 ? (
-                  <div className="rounded-xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 flex flex-col gap-1.5">
-                    <span className="self-start inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-[#7a8794] bg-white border border-[#dde3e9] rounded-full px-2 py-0.5">
-                      <CalendarOff size={11} className="shrink-0" /> {status.kind === 'closed' ? 'Closed today' : 'Closed for the day'}
-                    </span>
-                    <span className="text-[12px] text-[#51606e] leading-relaxed">
-                      Next: <span className="font-semibold text-[#16335c]">{nextOpen.row.label}</span>{' '}
-                      {nextDayLabel(nextOpen.offset, nextOpen.dayIndex)}
-                      <span className="text-[#7a8794]"> · {formatTime(nextOpen.row.slot.start)}</span>
-                    </span>
-                  </div>
-                ) : nextOpen ? (
-                  <div className="rounded-xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e] leading-relaxed">
-                    <span className="font-semibold text-[#51606e]">Next:</span>{' '}
-                    <span className="text-[#16335c] font-semibold">{nextOpen.row.label}</span>
-                    <span className="text-[#7a8794]"> · {formatTime(nextOpen.row.slot.start)}</span>
-                  </div>
-                ) : (
-                  <div className="rounded-xl border border-[#dde3e9] bg-[#f4f6f8] px-3 py-3 text-[12px] text-[#51606e]">
-                    No upcoming sessions this week.
-                  </div>
-                )}
-              </div>
+                <div className="pool-card-content">
+                  {live.length > 0 ? (
+                    live.map((r) => <HeroCard key={r.key} row={r} />)
+                  ) : status.kind === 'upcoming' ? (
+                    <div className="pool-state-card is-upcoming">
+                      <CalendarOff size={18} aria-hidden="true" />
+                      <p>{pools[poolKey].season} schedule starts {formatDate(status.validFrom)}.</p>
+                    </div>
+                  ) : status.kind === 'expired' ? (
+                    <div className="pool-state-card is-expired">
+                      <CalendarOff size={18} aria-hidden="true" />
+                      <p>No current schedule. Check the official catalog for the latest times.</p>
+                    </div>
+                  ) : nextOpen && nextOpen.offset > 0 ? (
+                    <div className="pool-state-card is-closed">
+                      <div className="pool-state-label">
+                        <CalendarOff size={15} aria-hidden="true" />
+                        <span>{status.kind === 'closed' ? 'Closed today' : 'Closed for the day'}</span>
+                      </div>
+                      <p>
+                        Next: <strong>{nextOpen.row.label}</strong>{' '}
+                        {nextDayLabel(nextOpen.offset, nextOpen.dayIndex)}
+                        <span> · {formatTime(nextOpen.row.slot.start)}</span>
+                      </p>
+                    </div>
+                  ) : nextOpen ? (
+                    <div className="pool-state-card is-next">
+                      <p>
+                        Next: <strong>{nextOpen.row.label}</strong>
+                        <span> · {formatTime(nextOpen.row.slot.start)}</span>
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="pool-state-card is-empty">
+                      <CalendarOff size={18} aria-hidden="true" />
+                      <p>No upcoming sessions this week.</p>
+                    </div>
+                  )}
+                </div>
+              </article>
             ))}
           </div>
         </div>
       )}
 
-      {/* Pool Schedule View (King or West Campus) */}
       {(activeTab === 'king' || activeTab === 'west') && (
-        <div className="flex flex-col gap-3">
-          {/* Day selector */}
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-4 px-4 py-1">
-            {DAY_ABBR.map((lbl, i) => {
-              const selected = day === i;
-              const today = i === now.dayIndex;
-              return (
-                <button
-                  key={i}
-                  onClick={() => { setDay(i); setOpenKey(null); }}
-                  aria-pressed={selected}
-                  className={`focus-ring shrink-0 w-[56px] py-2 rounded-xl text-[13px] font-semibold border cursor-pointer transition-colors flex flex-col items-center gap-0.5 ${
-                    selected
-                      ? 'bg-[#2a5caa] text-white border-[#2a5caa]'
-                      : 'bg-white text-[#1f4b7a] border-[#dde3e9] hover:border-[#2a5caa]'
-                  }`}
-                >
-                  {lbl}
-                  {today && <span className={`w-1 h-1 rounded-full ${selected ? 'bg-white' : 'bg-[#2a5caa]'}`} />}
-                </button>
-              );
-            })}
-          </div>
-
-          {freshnessNote && (
-            <div className="rounded-xl bg-[#fff6e0] border border-[#ecd9a0] text-[#6b5410] px-3.5 py-2.5 text-[12px] leading-snug flex gap-2 items-start">
-              <CalendarOff size={14} className="shrink-0 mt-0.5" />
-              <span>{freshnessNote}</span>
+        <div className="schedule-view schedule-view-pool">
+          <header className="view-heading view-heading-schedule">
+            <div>
+              <p className="view-eyebrow">Daily schedule</p>
+              <h2>{pools[pool].label}</h2>
+              <p className="view-subheading">{headingDay}</p>
             </div>
-          )}
+          </header>
 
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="font-display text-[22px] font-semibold uppercase tracking-wide text-[#16335c] leading-none">
-              {headingDay} · {pools[pool].label}
-            </h2>
+          <div className="schedule-controls">
+            <div className="day-strip" role="group" aria-label="Choose a day">
+              {DAY_ABBR.map((label, dayIndex) => {
+                const selected = day === dayIndex;
+                const today = dayIndex === now.dayIndex;
+                return (
+                  <button
+                    key={dayIndex}
+                    type="button"
+                    onClick={() => showDay(dayIndex)}
+                    aria-pressed={selected}
+                    aria-label={`${DAY_FULL[dayIndex]}${today ? ', today' : ''}`}
+                    className={`day-button pressable focus-ring ${selected ? 'is-selected' : ''} ${today ? 'is-today' : ''}`}
+                  >
+                    <span>{label}</span>
+                    {today && <span className="today-dot" aria-hidden="true" />}
+                  </button>
+                );
+              })}
+            </div>
+
             {activitiesForDay.length > 1 && (
-              <div className="relative">
+              <div className="activity-filter">
                 <select
                   value={activity}
-                  onChange={(e) => { setActivity(e.target.value); setOpenKey(null); }}
+                  onChange={(event) => {
+                    setActivity(event.target.value);
+                    setOpenKey(null);
+                  }}
                   aria-label="Filter by activity"
-                  className="focus-ring appearance-none bg-white border border-[#dde3e9] rounded-lg pl-3 pr-8 py-1.5 text-[13px] font-semibold text-[#1f4b7a] cursor-pointer hover:border-[#2a5caa]"
+                  className="pressable focus-ring"
                 >
                   <option value="all">All activities</option>
                   {activitiesForDay.map(([slug, label]) => (
                     <option key={slug} value={slug}>{label}</option>
                   ))}
                 </select>
-                <ChevronDown size={15} className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[#9aa6b2]" />
+                <ChevronDown size={16} aria-hidden="true" />
               </div>
             )}
           </div>
 
+          {freshnessNote && (
+            <aside className="schedule-notice">
+              <CalendarOff size={17} aria-hidden="true" />
+              <p>{freshnessNote}</p>
+            </aside>
+          )}
+
           {rows.length === 0 ? (
-            <div className="rounded-2xl border border-[#dde3e9] bg-white px-5 py-6 text-[14px] text-[#51606e]">
-              No programs scheduled at {pools[pool].label} on {headingDay}.
+            <div className="pool-state-card schedule-empty-state is-empty">
+              <CalendarOff size={20} aria-hidden="true" />
+              <p>No programs scheduled at {pools[pool].label} on {headingDay}.</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2.5">
-              {rows.map((r) => (
+            <div className="schedule-list" role="list">
+              {rows.map((row) => (
                 <ScheduleCard
-                  key={r.key}
-                  row={r}
-                  open={openKey === r.key}
-                  onToggle={() => setOpenKey(openKey === r.key ? null : r.key)}
+                  key={row.key}
+                  row={row}
+                  open={openKey === row.key}
+                  onToggle={() => setOpenKey(openKey === row.key ? null : row.key)}
                 />
               ))}
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-[12px] text-[#51606e] mt-1">
-            <span className="inline-flex items-center text-[10px] font-semibold uppercase tracking-wide text-[#8a6d1a] border border-[#e7cf86] bg-[#fdf6e3] rounded-full px-2 py-0.5">Limited</span>
-            <span>Fewer lanes open — pool is shared with lessons, teams, or other programs.</span>
-          </div>
+          <aside className="schedule-legend">
+            <span className="schedule-status-pill is-limited">Limited</span>
+            <p>Fewer lanes are open because the pool is shared with lessons, teams, or other programs.</p>
+          </aside>
 
-          <p className="text-[12px] text-[#7a8794] leading-relaxed mt-1">
-            {pools[pool].season} · times last checked {formatDate(pools[pool].lastUpdated)}, {pools[pool].lastUpdated.slice(0, 4)}.{' '}
+          <p className="schedule-source">
+            {pools[pool].season} · Times last checked {formatDate(pools[pool].lastUpdated)}, {pools[pool].lastUpdated.slice(0, 4)}.{' '}
             <a
               href={pools[pool].source}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#2a5caa] no-underline hover:underline"
             >
-              Verify on the official {pools[pool].label} schedule ↗
+              Verify on the official {pools[pool].label} schedule
+              <span aria-hidden="true"> ↗</span>
             </a>
           </p>
         </div>
       )}
 
-      {/* Floating Bottom Navigation Bar */}
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40 max-w-[500px] w-[calc(100%-1.5rem)] px-1">
-        <nav
-          aria-label="Pool view navigation"
-          className="bg-white/95 backdrop-blur-md border border-[#cdd5df] shadow-[0_12px_40px_rgba(0,0,0,0.18)] rounded-full p-2 flex items-center justify-between gap-1.5"
-        >
-          {/* King (West / Left) */}
+      <div className="view-switcher-shell">
+        <nav className="view-switcher" aria-label="Pool view navigation">
           <button
             type="button"
-            onClick={() => {
-              setPool('king');
-              setActiveTab('king');
-              setOpenKey(null);
-            }}
+            onClick={() => showPoolSchedule('king')}
             aria-pressed={activeTab === 'king'}
             aria-label="King Pool"
-            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
-              activeTab === 'king'
-                ? 'bg-[#2a5caa] text-white shadow-sm'
-                : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
-            }`}
+            className={`view-switcher-button pressable focus-ring ${activeTab === 'king' ? 'is-active' : ''}`}
           >
-            <MapPin size={17} className="shrink-0" />
-            <span className="truncate">King</span>
+            <MapPin size={17} aria-hidden="true" />
+            <span>King</span>
           </button>
 
-          {/* Now (Center) */}
           <button
             type="button"
             onClick={() => {
@@ -338,53 +351,25 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
               setOpenKey(null);
             }}
             aria-pressed={activeTab === 'happening'}
-            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
-              activeTab === 'happening'
-                ? 'bg-[#2a5caa] text-white shadow-sm'
-                : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
-            }`}
+            aria-label="Happening now"
+            className={`view-switcher-button pressable focus-ring ${activeTab === 'happening' ? 'is-active' : ''}`}
           >
-            <span className="relative flex items-center justify-center h-2.5 w-2.5 shrink-0">
-              {anyPoolOpen && (
-                <span
-                  className={`animate-ping absolute inset-0 inline-flex h-full w-full rounded-full opacity-75 ${
-                    activeTab === 'happening' ? 'bg-emerald-300' : 'bg-[#33c27f]'
-                  }`}
-                />
-              )}
-              <span
-                className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-                  anyPoolOpen
-                    ? activeTab === 'happening'
-                      ? 'bg-emerald-300'
-                      : 'bg-[#33c27f]'
-                    : activeTab === 'happening'
-                      ? 'bg-red-300'
-                      : 'bg-[#e5484d]'
-                }`}
-              />
-            </span>
-            <span className="truncate">Now</span>
+            <span
+              className={`view-switcher-status-dot ${anyPoolOpen ? 'has-live-sessions' : 'is-quiet'}`}
+              aria-hidden="true"
+            />
+            <span>Now</span>
           </button>
 
-          {/* West Campus (East / Right) */}
           <button
             type="button"
-            onClick={() => {
-              setPool('west');
-              setActiveTab('west');
-              setOpenKey(null);
-            }}
+            onClick={() => showPoolSchedule('west')}
             aria-pressed={activeTab === 'west'}
             aria-label="West Campus Pool"
-            className={`focus-ring flex-1 min-w-0 flex items-center justify-center gap-2 py-3 px-3.5 rounded-full text-[15px] sm:text-[16px] font-bold leading-none transition-all cursor-pointer ${
-              activeTab === 'west'
-                ? 'bg-[#2a5caa] text-white shadow-sm'
-                : 'text-[#51606e] hover:text-[#16335c] hover:bg-[#f4f7fb]'
-            }`}
+            className={`view-switcher-button pressable focus-ring ${activeTab === 'west' ? 'is-active' : ''}`}
           >
-            <MapPin size={17} className="shrink-0" />
-            <span className="truncate">West</span>
+            <MapPin size={17} aria-hidden="true" />
+            <span>West</span>
           </button>
         </nav>
       </div>
@@ -396,19 +381,14 @@ export function ScheduleTab({ overrideDate }: ScheduleTabProps = {}) {
 // signup surface. See archive/signup-ui/README.md before adding one back.
 function HeroCard({ row }: { row: Row }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#2a5caa] to-[#16335c] text-white shadow-md">
-      <svg className="absolute inset-x-0 bottom-0 w-full opacity-20" viewBox="0 0 400 80" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 40 C 60 10, 120 70, 200 40 S 340 10, 400 40 L400 80 L0 80 Z" fill="white" />
-        <path d="M0 55 C 70 30, 140 80, 200 55 S 330 30, 400 55 L400 80 L0 80 Z" fill="white" opacity="0.6" />
-      </svg>
-      <div className="relative p-3.5 flex flex-col gap-2">
-        <span className="self-start inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide bg-[#33c27f] text-[#06351f] rounded-full px-2 py-0.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#06351f]" /> Open now
-        </span>
-        <div className="font-display text-[18px] font-semibold uppercase tracking-wide leading-tight">{row.label}</div>
-        <div className="text-[13px] font-medium text-white/90">{formatRange(row.slot)}</div>
+    <article className="now-session-card">
+      <div className="now-session-status">
+        <span aria-hidden="true" />
+        <span>Open now</span>
       </div>
-    </div>
+      <h4>{row.label}</h4>
+      <p>{formatRange(row.slot)}</p>
+    </article>
   );
 }
 
@@ -416,51 +396,52 @@ function ScheduleCard({ row, open, onToggle }: { row: Row; open: boolean; onTogg
   const Icon = programIcon(row.slug);
   const pill = STATUS_PILL[row.status];
   const dim = row.status === 'ended';
+  const detailsId = `schedule-details-${row.key}`;
 
   return (
-    <div
-      className={`rounded-2xl border bg-white transition-shadow ${
-        row.status === 'live' ? 'border-[#bfe6cd] shadow-[0_1px_5px_rgba(51,194,127,0.15)]' : 'border-[#dde3e9]'
-      } ${dim ? 'opacity-60' : ''}`}
+    <article
+      role="listitem"
+      className={`schedule-card is-${row.status} ${dim ? 'is-dimmed' : ''} ${open ? 'is-open' : ''}`}
     >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="focus-ring appearance-none bg-transparent w-full text-left flex items-center gap-3 p-3.5 cursor-pointer"
+        aria-controls={detailsId}
+        className="schedule-card-button pressable focus-ring"
       >
-        <div className="h-11 w-11 shrink-0 rounded-xl bg-[#eaf1fa] text-[#2a5caa] flex items-center justify-center">
-          <Icon size={20} strokeWidth={2} />
+        <div className="schedule-card-icon">
+          <Icon size={21} strokeWidth={2} aria-hidden="true" />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[13px] font-semibold text-[#51606e]">{formatRange(row.slot)}</span>
+        <div className="schedule-card-summary">
+          <div className="schedule-card-meta">
+            <span>{formatRange(row.slot)}</span>
             {row.slot.limited && (
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-[#8a6d1a] border border-[#e7cf86] bg-[#fdf6e3] rounded-full px-2 py-0.5">Limited</span>
+              <span className="schedule-status-pill is-limited">Limited</span>
             )}
           </div>
-          <div className="text-[16px] font-bold text-[#16335c] leading-tight truncate">{row.label}</div>
-          <div className="flex items-center gap-1 text-[12px] text-[#7a8794] mt-0.5">
-            <Tag size={11} className="shrink-0" />
-            <span className="truncate">Ages {row.ages}</span>
+          <h3>{row.label}</h3>
+          <div className="schedule-card-ages">
+            <Tag size={12} aria-hidden="true" />
+            <span>Ages {row.ages}</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="schedule-card-trailing">
           {pill && (
-            <span className={`text-[11px] font-semibold rounded-full px-2.5 py-1 border ${pill.cls}`}>{pill.text}</span>
+            <span className={`schedule-status-pill ${pill.cls}`}>{pill.text}</span>
           )}
-          <ChevronDown size={18} className={`text-[#9aa6b2] transition-transform ${open ? 'rotate-180' : ''}`} />
+          <ChevronDown size={18} className="schedule-card-chevron" aria-hidden="true" />
         </div>
       </button>
       {open && (
-        <div className="px-3.5 pb-4 pl-[62px] flex flex-col gap-3">
-          <p className="text-[14px] text-[#3a4651] leading-relaxed">{row.desc}</p>
-          <div className="flex gap-6 flex-wrap text-[13px] text-[#51606e] pt-2 border-t border-[#eef1f4]">
-            <div><span className="font-semibold text-[#1a1a1a]">Ages:</span> {row.ages}</div>
-            <div><span className="font-semibold text-[#1a1a1a]">Cost:</span> {row.cost}</div>
+        <div id={detailsId} className="schedule-card-details">
+          <p>{row.desc}</p>
+          <div className="schedule-card-facts">
+            <div><strong>Ages:</strong> {row.ages}</div>
+            <div><strong>Cost:</strong> {row.cost}</div>
           </div>
         </div>
       )}
-    </div>
+    </article>
   );
 }
